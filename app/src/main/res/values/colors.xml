@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#464646</color>
+    <color name="colorPrimaryDark">#464646</color>
+    <color name="colorAccent">#464646</color>
+    <color name="background_color">#f5f5f5</color><!--背景色-->
+    <color name="view_eee">#eeeeee</color><!--分割线-->
+    <!--常用色系-->
+    <color name="transparent">#00000000</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000</color>
+    <!--文本-->
+    <color name="text_333">#333333</color><!--标题文本-->
+    <color name="text_ccc">#cccccc</color><!--提示文本-->
+    <color name="text_999">#999999</color><!--标签-->
+    <color name="text_red">#f53e31</color>
+    <!-- 灰色  数字越小越白 -->
+    <color name="gray0">#F2F2F2</color>
+    <color name="gray1">#EDEDED</color>
+    <color name="gray2">#EAE8E9</color>
+    <color name="gray3">#DBDBDB</color>
+    <color name="gray4">#999999</color>
+    <color name="gray5">#666666</color>
+    <color name="gray6">#464646</color>
+
+    <!-- blue  数字越小越白 -->
+    <color name="blue11">#000011</color>
+    <color name="blue55">#003355</color>
+    <color name="blue99">#000099</color>
+
+    <!---->
+    <color name="skip_black">#40333333</color>
+    <color name="blue">#00AAEE</color>
+    <color name="yellow">#f9b734</color>
+    <color name="org">#fb7c00</color>
+
+    <color name="annulus_red_color">#f04135</color>
+    <color name="progrss_red_color">#eb5b51</color>
+    <color name="annulus_blue_color">#6184f8</color>
+    <color name="annulus_yellow_color">#f6ba38</color>
+    <color name="bjj_color">#44c1ef</color>
+    <color name="xjj_color">#ff7b7b</color>
+    <color name="jxj_color">#fe9b3c</color>
+    <color name="pg_yellow">#ecc475</color>
+    <color name="bk_color">#f74f42</color>
+
+    <!-- local -->
+    <color name="deep_gray_all_my_books">#515151</color>
+    <color name="bg_all_my_books">#f9f9f9</color>
+
+    <!-- pay -->
+    <color name="green">#4CB948</color>
+
+    <!-- search -->
+    <color name="serach_red">#E9544c</color>
+    <color name="serach_yellow">#E78C3A</color>
+    <color name="serach_yellow2">#F1c552</color>
+
+    <!-- read_my -->
+    <color name="alpha">#00ffffff</color>
+</resources>

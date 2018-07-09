@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:layout_centerInParent="true"
+    android:padding="3px">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        >
+        <ImageView
+            android:id="@+id/icon_left"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+
+            >
+        </ImageView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/icon_left"
+            android:layout_toLeftOf="@+id/dot"
+            android:padding="2dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="5dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/bookname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:layout_weight="5"
+                android:layout_marginLeft="0dp"
+                android:layout_marginBottom="0dp"
+                android:textSize="20dp"
+                android:textColor="@color/gray5"
+                android:textStyle="normal"
+                android:maxEms="30"
+                android:ellipsize="end"
+                >
+            </TextView>
+
+            <TextView
+                android:id="@+id/booktime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:layout_weight="2"
+                android:layout_marginLeft="0dp"
+                android:textSize="12dp"
+                android:textStyle="normal"
+                android:singleLine="true"
+                android:maxEms="20"
+                android:ellipsize="end"
+                >
+            </TextView>
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/dot"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/myicon_dot3_deepgray"
+            >
+        </ImageView>
+    </RelativeLayout>
+</RelativeLayout>
+

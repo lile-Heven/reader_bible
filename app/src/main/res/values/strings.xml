@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">灵修工具</string>
+    <string name="booklist_top_title">旧约</string>
+    <string name="booklist_top_numbers">(共39本)</string>
+    <string name="booklist_title">创世纪</string>
+    <string name="waitAdd1">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;等待载入数据...等待载入数据...等待载入数据...等待载入数据...等待载入数据...等待载入数据...等待载入数据...等待载入数据...</string>
+    <string name="booklist_title_author">作者:摩西</string>
+    <string name="booklist_content">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;未知的待定两行，未知的待定两行，未知的待定两行，未知的待定两行，未知的待定两行，未知的待定两行。</string>
+
+    <!-- local -->
+    <string name="all_my_books">所有个人书籍</string>
+    <string name="all_my_books_select">选择</string>
+    <string name="local_recent">最&#160;近</string>
+    <string name="local_folder">文&#160;件</string>
+
+</resources>
