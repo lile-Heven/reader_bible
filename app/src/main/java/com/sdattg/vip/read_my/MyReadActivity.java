@@ -14,19 +14,19 @@ public class MyReadActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_read_my);
+        setContentView(R.layout.layout_read_my3);
         initView();
         initListens();
         initDates();
     }
 
     private void initView(){
-        read = findViewById(R.id.read);
-        settings = findViewById(R.id.settings);
+        //read = findViewById(R.id.read);
+        //settings = findViewById(R.id.settings);
     }
 
     private void initListens(){
-        read.setOnClickListener(this);
+        //read.setOnClickListener(this);
     }
 
     private void initDates(){
@@ -36,10 +36,10 @@ public class MyReadActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.read:
-                settings.setAnimation(inAnima);//设置显示时动画
-                settings.setVisibility(View.VISIBLE);//设置显示
-                break;
+            //case R.id.read:
+                //settings.setAnimation(inAnima);//设置显示时动画
+                //settings.setVisibility(View.VISIBLE);//设置显示
+            //    break;
         }
     }
 }

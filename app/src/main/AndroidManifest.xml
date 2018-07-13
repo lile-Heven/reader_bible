@@ -15,23 +15,24 @@
     <!--允许程序改变网络连接状态 -->
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <application
+        android:name=".app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/icon_app"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".GuideActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".local.FileBrowserActivity"></activity>
         <activity android:name=".pay.PayActivity"></activity>
         <activity android:name=".pay.PayActivity2"></activity>
-        <activity android:name=".read.MainReader"></activity>
         <activity android:name=".read_my.MyReadActivity"></activity>
         <activity android:name=".search.SerachActivity"></activity>
         <activity android:name=".search.SerachActivity2"></activity>

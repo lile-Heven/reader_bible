@@ -13,17 +13,19 @@
         android:visibility="visible">
 
         <TextView
+            android:id="@+id/tv_first_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="旧约"
+            android:text="@string/nothing"
             android:textColor="@color/black"
             android:textSize="15dp" />
 
         <TextView
+            android:id="@+id/tv_first_title_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="(共39本)"
+            android:text="@string/nothing"
             android:textColor="@color/black"
             android:textSize="12dp" />
     </LinearLayout>
@@ -36,29 +38,46 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_book_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="创世纪"
+            android:text="@string/nothing"
             android:textColor="@color/black"
             android:textSize="15dp" />
 
         <TextView
+            android:id="@+id/tv_book_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="作者: 摩西"
+            android:text="@string/nothing"
             android:textColor="@color/gray4"
             android:textSize="11dp" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/waitAdd1"
-        android:textColor="@color/gray4"
-        android:textSize="11dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_book_jieshao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/gray4"
+            android:maxLines="2"
+            android:text="@string/nothing"
+            android:textSize="13dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/more_introduce"
+            android:background="@drawable/shape_corner"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            />
+    </RelativeLayout>
 
     <View
         android:layout_marginTop="10dp"

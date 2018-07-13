@@ -17,9 +17,6 @@ import android.widget.Toast;
 import com.sdattg.vip.base.BaseFragment;
 import com.sdattg.vip.local.FileBrowserActivity;
 import com.sdattg.vip.local.MyStarAdapter;
-import com.sdattg.vip.read.Book;
-import com.sdattg.vip.read.BookInfoDao;
-import com.sdattg.vip.read.MainReader;
 import com.sdattg.vip.read_my.MyReadActivity;
 
 import java.io.File;
@@ -147,6 +144,7 @@ public class MyFragmentBendi extends BaseFragment {
 
     private void jumpToReadActivity2(String path){
         Intent intent = new Intent(getActivity(), MyReadActivity.class);
+        //Intent intent = new Intent(getActivity(), SearchExerActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("path", path);//地址
         intent.putExtras(bundle);
@@ -174,7 +172,7 @@ public class MyFragmentBendi extends BaseFragment {
         return stringAll;
     }
 
-    private BookInfoDao bookInfoDao;
+    /*private BookInfoDao bookInfoDao;
     private void jumpToReadActivity(String path){
         File itemFile= null;
         if(path != null){
@@ -222,7 +220,7 @@ public class MyFragmentBendi extends BaseFragment {
         bundle.putLong("wordsNum", book.getWordsNum());//总字数
         intent.putExtras(bundle);
         getActivity().startActivity(intent);
-    }
+    }*/
 
 }
 

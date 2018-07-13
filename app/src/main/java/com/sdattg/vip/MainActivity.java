@@ -27,7 +27,7 @@ import static com.sdattg.vip.MyFragmentBendi.FILE_RESULT_CODE;
 public class MainActivity extends BaseTablayoutActivity {
     private TextView tv_serach;
     private final String TAG = MainActivity.class.getSimpleName();
-    private String[] bookzips = {"02-灵修.zip", "testunzip.zip"};
+
 
     private MyFragmentShuKu mFragmentShuku;
     private MyFragmentLingXiu mFragmentLingXiu;
@@ -61,8 +61,8 @@ public class MainActivity extends BaseTablayoutActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkMyPermission();
-        unZip();
+
+
     }
 
     @Override
@@ -147,68 +147,7 @@ public class MainActivity extends BaseTablayoutActivity {
         }
     }
 
-
     public void updateFragmentBenDi(){
         mFragmentBenDi.pathsChanged();
     }
-
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.WRITE_EXTERNAL_STORAGE" };
-    private void checkMyPermission(){
-        try {
-            //检测是否有写的权限
-            int permission = ActivityCompat.checkSelfPermission(this,
-                    "android.permission.WRITE_EXTERNAL_STORAGE");
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                // 没有写的权限，去申请写的权限，会弹出对话框
-                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void unZip(){
-        Log.d("Tab01ProductAdapter", ZipTool.APP_DIR);
-        isAPP_DIRExists();
-        //ZipTool.upZipFileDir();
-        for (String one:bookzips) {
-            File result = checkBooksExists(one);
-            if(result != null){
-                ZipTool.upZipFileDir(result, ZipTool.APP_DIR_UNZIP);
-
-            }
-        }
-    }
-
-    private void isAPP_DIRExists(){
-        File appFile = new File(ZipTool.APP_DIR);
-        if(!appFile.exists()){
-            appFile.mkdirs();
-            Log.d("Tab01ProductAdapter", "!appFile.exists()");
-        }
-
-        File appUnzipFile = new File(ZipTool.APP_DIR_UNZIP);
-        if(!appUnzipFile.exists()){
-            appUnzipFile.mkdirs();
-            Log.d("Tab01ProductAdapter", "!appUnzipFile.exists()");
-        }
-    }
-
-    private File checkBooksExists(String book){
-        String bookFilePath = ZipTool.APP_DIR + "/" + book;
-        Log.d("Tab01ProductAdapter", "into checkBooksExists() bookFilePath:" + bookFilePath);
-        File bookFile = new File(bookFilePath);
-        if(!bookFile.exists()){
-            Log.d("Tab01ProductAdapter", "!bookFile.exists() is true");
-            return null;
-        }else{
-            Log.d("Tab01ProductAdapter", "!bookFile.exists() is false");
-            return bookFile;
-        }
-    }
-
-
 }

@@ -94,8 +94,10 @@ public class ZipTool {
         if(zipFile != null && zipFile.exists()){
             zipFile.delete();
         }
+
         return true;
     }
+
 
     /**
      * 给定根目录，返回一个相对路径所对应的实际文件名.

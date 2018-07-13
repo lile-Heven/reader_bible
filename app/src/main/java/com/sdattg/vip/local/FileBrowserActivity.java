@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.sdattg.vip.R;
 import com.sdattg.vip.tool.ZipTool;
+import com.sdattg.vip.util.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class FileBrowserActivity extends ListActivity {
         pathList = new ArrayList<>();
         File file = new File(filePath);
         File[] files = file.listFiles();
-        orderByName(files);   // sort by Name
+        FileUtil.orderByName(files);   // sort by Name
         if (!filePath.equals(rootPath)) {
             itemsList.add("b1");
             pathList.add(rootPath);
@@ -178,25 +179,7 @@ public class FileBrowserActivity extends ListActivity {
         }
     }
 
-    public static void orderByName(File[] files) {
-        //File file = new File(filePath);
-        //File[] files = file.listFiles();
-        List fileList = Arrays.asList(files);
-        Collections.sort(fileList, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                if (o1.isDirectory() && o2.isFile())
-                    return -1;
-                if (o1.isFile() && o2.isDirectory())
-                    return 1;
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-        for (File file1 : files) {
-            System.out.println(file1.getName());
 
-        }
-    }
 
     /*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

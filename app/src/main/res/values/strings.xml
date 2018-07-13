@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">灵修工具</string>
+    <string name="nothing">暂无数据</string>
     <string name="booklist_top_title">旧约</string>
     <string name="booklist_top_numbers">(共39本)</string>
     <string name="booklist_title">创世纪</string>
@@ -12,5 +13,8 @@
     <string name="all_my_books_select">选择</string>
     <string name="local_recent">最&#160;近</string>
     <string name="local_folder">文&#160;件</string>
+
+    <!-- shuku -->
+    <string name="more_introduce">更多介绍</string>
 
 </resources>

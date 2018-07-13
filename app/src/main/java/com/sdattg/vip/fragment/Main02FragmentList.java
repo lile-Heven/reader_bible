@@ -8,7 +8,10 @@ import android.view.View;
 import com.sdattg.vip.R;
 import com.sdattg.vip.adapter.Tab01ProductAdapter;
 import com.sdattg.vip.base.BaseFragment;
+import com.sdattg.vip.bean.CategoryBean;
+import com.sdattg.vip.search.MyCategoryDBHelper;
 import com.sdattg.vip.tool.ZipTool;
+import com.sdattg.vip.util.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,10 +20,16 @@ import java.util.List;
 /**
  * Created by yinqm on 2018/6/26.
  */
-public class Main02FragmentList extends BaseFragment {
+public class Main02FragmentList extends BaseFragment implements View.OnClickListener{
     private RecyclerView rv;
-    private List<String> list;
-        Tab01ProductAdapter adapter;
+    private Tab01ProductAdapter adapter;
+    private List<String> list_item;
+
+    public static int book_count_jiuyue = 0;
+    public static int book_count_xinyue = 0;
+
+    private List<CategoryBean> books_jiuyue;
+    private List<CategoryBean> books_xinyue;
     @Override
     protected int getLayoutId() {
         return R.layout.main02fragment_list;
@@ -33,70 +42,86 @@ public class Main02FragmentList extends BaseFragment {
 
     @Override
     protected void initView(View view) {
-        list = new ArrayList<>();
+        initMyDatas();
+
+        /*list = new ArrayList<BookBeanOnShuKu>();
         list.add("");
         list.add("");
         list.add("");
         list.add("");
-        list.add("");
-        adapter = new Tab01ProductAdapter(R.layout.recy_item, list, getActivity());
+        list.add("");*/
+        Log.d("Main02FragmentList", "list_item.size():" + list_item.size());
+        adapter = new Tab01ProductAdapter(R.layout.recy_item, list_item, getActivity());
         rv = view.findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv.setAdapter(adapter);
+        //rv.setOnClickListener();
+    }
+
+    @Override
+    public void onClick(View view) {
+
+    }
+
+    private void initMyDatas(){
+
+        list_item = new ArrayList<String>();
+
+        MyCategoryDBHelper myCategoryDBHelper = new MyCategoryDBHelper(getContext());
+        List<CategoryBean> list_jiuyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("01-旧约"), null);
+        for (CategoryBean categoryBean:
+                list_jiuyue) {
+            BookBeanOnShuKu bean = new BookBeanOnShuKu();
+            bean.author = "作者:摩西";
+            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            List<CategoryBean> books_jiuyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
+            if(books_jiuyue.size() > 0){
+                bean.jieshao = books_jiuyue.get(0).categoryJieshao;
+                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            }else{
+                bean.jieshao = "无介绍";
+            }
+            list_item.add(bean.toString());
+            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
+        }
+
+        book_count_jiuyue = list_jiuyue.size();
+
+        List<CategoryBean> list_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("02-新约"), null);
+        for (CategoryBean categoryBean:
+                list_xinyue) {
+            BookBeanOnShuKu bean = new BookBeanOnShuKu();
+            bean.title = "";
+            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.author = "作者:摩西";
+            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
+            if(books_xinyue.size() > 0){
+                bean.jieshao = books_xinyue.get(0).categoryJieshao;
+                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            }else{
+                bean.jieshao = "无介绍";
+            }
+            list_item.add(bean.toString());
+            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
+        }
+
+        book_count_xinyue = list_xinyue.size();
+    }
+
+    private class BookBeanOnShuKu{
+        public String title;
+        public String author;
+        public String jieshao;
+
+        @Override
+        public String toString() {
+
+            return title + "#3#" + author + "#3#" + jieshao;
+        }
     }
 
     @Override
     protected void initData() {
-        unZip();
-    }
-
-    private void unZip(){
-        Log.d("Tab01ProductAdapter", ZipTool.APP_DIR);
-        isAPP_DIRExists();
-        //ZipTool.upZipFileDir();
-
-        //ZipTool.upZipFileDir(checkBooksExists("02-灵修.zip"), ZipTool.APP_DIR_UNZIP);
-        ZipTool.upZipFileDir(checkBooksExists("testunzip.zip"), ZipTool.APP_DIR_UNZIP);
-    }
-
-    private void isAPP_DIRExists(){
-        File appFile = new File(ZipTool.APP_DIR);
-        if(!appFile.exists()){
-            appFile.mkdirs();
-            Log.d("Tab01ProductAdapter", "!appFile.exists()");
-        }
-
-        File appUnzipFile = new File(ZipTool.APP_DIR_UNZIP);
-        if(!appUnzipFile.exists()){
-            appUnzipFile.mkdirs();
-            Log.d("Tab01ProductAdapter", "!appUnzipFile.exists()");
-        }
-        /*File appFile2 = new File("/storage/emulated/0/CloudDrive");
-        if(!appFile2.exists()){
-            //appFile2.mkdirs();
-            Log.d("Tab01ProductAdapter", "!appFile222.exists()");
-        }else{
-            Log.d("Tab01ProductAdapter", "!appFile222.exists() is false");
-
-        }*/
-
-
-    }
-
-    private File checkBooksExists(String book){
-        String bookFilePath = ZipTool.APP_DIR + "/" + book;
-        Log.d("Tab01ProductAdapter", "into checkBooksExists() bookFilePath:" + bookFilePath);
-        File bookFile = new File(bookFilePath);
-        if(!bookFile.exists()){
-            //bookFile.mkdirs();
-            //Log.d("Tab01ProductAdapter", "!appUnzipFile.exists()");
-            Log.d("Tab01ProductAdapter", "!bookFile.exists() is true");
-
-        }else{
-
-            Log.d("Tab01ProductAdapter", "!bookFile.exists() is false");
-        }
-        return bookFile;
     }
 
     @Override
