@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:background="#ffffff"
+    android:padding="3px">
+
+    <TextView
+        android:id="@+id/tv_item_historyname"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_25dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="5dp"
+        android:layout_centerVertical="true"
+        android:ellipsize="end"
+        android:maxLength="10"
+        android:padding="2dp"
+        android:textColor="@color/gray5"
+        android:textSize="20dp"
+        android:textStyle="normal"></TextView>
+
+
+    <ImageView
+        android:id="@+id/iv_item_lajitong"
+        android:layout_width="@dimen/size_25dp"
+        android:layout_height="@dimen/size_25dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
+        android:background="@mipmap/lajitong"></ImageView>
+</RelativeLayout>
+

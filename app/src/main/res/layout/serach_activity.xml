@@ -21,13 +21,14 @@
             android:background="@mipmap/left" />
 
         <EditText
+            android:id="@+id/et_scontent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/size_5dp"
             android:layout_weight="1"
             android:background="@drawable/round_rect"
             android:gravity="left|center_vertical"
-            android:hint="云汐传"
+            android:hint="箴2:4搜求它,如搜求珍宝!"
             android:paddingLeft="@dimen/size_10dp"
             android:textColor="@color/gray5"
             android:textCursorDrawable="@drawable/edit_color"
@@ -44,9 +45,146 @@
             android:textSize="@dimen/size_15dp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/size_10dp"
+        android:paddingRight="@dimen/size_10dp"
+        android:paddingTop="@dimen/size_1dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请选择搜索类型："
+            android:layout_marginTop="@dimen/size_5dp"
+            android:textColor="@color/text_999"
+            android:textSize="@dimen/size_13dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"
+            android:background="#f5f5f5"
+            />
+        <RadioGroup
+            android:id="@+id/rg_searchkind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:checkedButton="@+id/rb_content"
+            android:gravity="center_vertical"
+
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rb_book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/size_12dp"
+                android:text="书籍搜索"/>
+
+            <RadioButton
+                android:id="@+id/rb_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/size_12dp"
+                android:text="标题搜索"/>
+
+            <RadioButton
+                android:id="@+id/rb_index"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/size_12dp"
+                android:text="目录搜索"/>
+
+            <RadioButton
+                android:id="@+id/rb_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/size_12dp"
+                android:text="内容搜索"/>
+
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_5dp"
+            android:background="#f5f5f5"
+            />
+
+        <TextView
+            android:id="@+id/tv_sactivity_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已选中："
+            android:layout_marginTop="@dimen/size_2dp"
+            android:textColor="@color/text_999"
+            android:textSize="@dimen/size_13dp" />
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_2dp"
+        android:background="#f5f5f5"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_40dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/size_10dp"
+        android:paddingRight="@dimen/size_10dp"
+        android:paddingTop="@dimen/size_1dp">
+        <TextView
+            android:id="@+id/tv_sactivity_shengjing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="圣经"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:textColor="@color/text_333"
+            android:textSize="@dimen/size_25dp" />
+
+        <TextView
+            android:id="@+id/tv_sactivity_huaizhu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="怀著"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:textColor="@color/text_333"
+            android:textSize="@dimen/size_25dp" />
+
+        <TextView
+            android:id="@+id/tv_sactivity_qita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="其他"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:textColor="@color/text_333"
+            android:textSize="@dimen/size_25dp" />
+
+        <TextView
+            android:id="@+id/tv_sactivity_yingwen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="英文"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:textColor="@color/text_333"
+            android:textSize="@dimen/size_25dp" />
+
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/fl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_10dp"></FrameLayout>
 </LinearLayout>

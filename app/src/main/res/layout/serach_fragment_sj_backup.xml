@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_40dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/size_10dp"
+        android:paddingRight="@dimen/size_10dp"
+        android:paddingTop="@dimen/size_1dp">
+
+        <TextView
+            android:id="@+id/tv_fragment_sj_quanbu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:gravity="center"
+            android:text="全部"
+            android:textColor="@color/text_333"
+            android:textSize="@dimen/size_25dp" />
+
+        <TextView
+            android:id="@+id/tv_fragment_sj_jiuyue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:gravity="center"
+            android:text="旧约"
+            android:textColor="@color/text_333"
+            android:textSize="@dimen/size_25dp" />
+
+        <TextView
+            android:id="@+id/tv_fragment_sj_xinyue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:gravity="center"
+            android:text="新约"
+            android:textColor="@color/text_333"
+            android:textSize="@dimen/size_25dp" />
+
+
+    </LinearLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/size_5dp"
+            android:paddingRight="@dimen/size_5dp"
+            android:paddingTop="@dimen/size_1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_40dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/size_10dp"
+                android:paddingRight="@dimen/size_10dp"
+                android:paddingTop="@dimen/size_1dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/size_25dp"
+                        android:layout_height="@dimen/size_25dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/myicon_correct" />
+
+                    <TextView
+                        android:id="@+id/tv_fragment_sj_scroll_jiuyue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:gravity="center"
+                        android:text="旧约"
+                        android:textColor="@color/text_333"
+                        android:textSize="@dimen/size_25dp" />
+                </LinearLayout>
+
+                <GridView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </GridView>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_40dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/size_10dp"
+                android:paddingRight="@dimen/size_10dp"
+                android:paddingTop="@dimen/size_1dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/size_25dp"
+                        android:layout_height="@dimen/size_25dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/myicon_correct"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_fragment_sj_scroll_xinyue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:gravity="center"
+                        android:text="新约"
+                        android:textColor="@color/text_333"
+                        android:textSize="@dimen/size_25dp" />
+                </LinearLayout>
+
+                <GridView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </GridView>
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

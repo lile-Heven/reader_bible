@@ -13,11 +13,18 @@ import com.sdattg.vip.bean.CategoryBean;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class MyCategoryDBHelper extends SQLiteOpenHelper {
 
@@ -203,6 +210,123 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
         }
         return searchBeans;
 
+    }
+
+    /**
+     * 获取某一个类目的搜索书籍情况，比如：圣经 这个类目
+     * @param TABLE_NAME
+     * @param args
+     * @return
+     */
+    public HashMap<String, List<String>> getQueryBooks(String TABLE_NAME, String args){
+        HashMap<String, List<String>> results = new HashMap<String, List<String>>();
+        Cursor cursor;
+        if (TextUtils.isEmpty(args)) {
+            cursor = getWritableDatabase().rawQuery("select * from '" + TABLE_NAME + "'" + "order by InsertOrder asc", null);
+        } else {
+            //cursor = getCursorByKeyValue(TABLE_NAME, InsertOrder, "0");
+            cursor = null;
+        }
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                Log.d("MyCategoryDBHelper", cursor.getCount() + "");
+                cursor.moveToFirst();
+                results.put(cursor.getString(cursor.getColumnIndex(FileName_category)), new ArrayList<String>());
+                cursor.moveToNext();
+                while (!cursor.isAfterLast()) {
+                    results.put(cursor.getString(cursor.getColumnIndex(FileName_category)), new ArrayList<String>());
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+
+            /*Cursor cursor2;
+            for (int i = 0; i < results.size(); i++){
+                cursor2 = getWritableDatabase().rawQuery("select * from '" + results.keySet() + "'" + "order by InsertOrder asc", null);
+            }*/
+
+            Set<String> keySet = results.keySet();
+            Iterator iterator = keySet.iterator();
+            String[] keys = new String[keySet.size()];
+            int ii = 0;
+            while (iterator.hasNext()){
+                String temp = (String)iterator.next();
+                Log.d("findbug0715", "temp:" + temp);
+                keys[ii] = temp;
+                ii++;
+            }
+
+            List fileList = Arrays.asList(keys);
+            Collections.sort(fileList, new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+
+            Cursor cursor2;
+            for (String name:
+                 keys) {
+                Log.d("findbug0715", "name:" + name);
+                cursor2 = getWritableDatabase().rawQuery("select * from '" + name + "'" + "order by InsertOrder asc", null);
+                if (cursor2 != null) {
+                    if (cursor2.getCount() > 0) {
+                        List<String> list = results.get(name);
+                        Log.d("MyCategoryDBHelper", cursor2.getCount() + "");
+                        cursor2.moveToFirst();
+                        list.add(cursor2.getString(cursor2.getColumnIndex(FileName_category)));
+
+                        cursor2.moveToNext();
+                        while (!cursor2.isAfterLast()) {
+                            list.add(cursor2.getString(cursor2.getColumnIndex(FileName_category)));
+                            cursor2.moveToNext();
+                        }
+
+                        results.put(name, list);
+                    }
+                    cursor.close();
+                }else {
+                    Log.d("MyCategoryDBHelper", "into getCategory cursor == null TABLE_NAME:" + name);
+                }
+
+            }
+
+            showResults(results);
+
+        }else{
+            Log.d("MyCategoryDBHelper", "into getCategory cursor == null TABLE_NAME:" + TABLE_NAME);
+        }
+        return results;
+    }
+
+    private void showResults(HashMap<String, List<String>> results){
+        Set<String> keySet = results.keySet();
+        Iterator iterator = keySet.iterator();
+        String[] keys = new String[keySet.size()];
+        int ii = 0;
+        while (iterator.hasNext()){
+            String temp = (String)iterator.next();
+            Log.d("findbug0715", "temp:" + temp);
+            keys[ii] = temp;
+            ii++;
+        }
+
+        List fileList = Arrays.asList(keys);
+        Collections.sort(fileList, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
+
+        for (String category:
+        keys) {
+            Log.d("findbug0715", "showResults category:" + category);
+            for (String bookName:
+            results.get(category)) {
+                Log.d("findbug0715", "showResults bookName:" + bookName);
+            }
+        }
     }
 
     /**

@@ -11,5 +11,12 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/size_10dp"
         android:paddingRight="@dimen/size_10dp"
-        android:paddingTop="@dimen/size_20dp"></LinearLayout>
+        android:paddingTop="@dimen/size_20dp">
+        <ListView
+            android:id="@+id/lv_sresult"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+
+
+    </LinearLayout>
 </LinearLayout>
