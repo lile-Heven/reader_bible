@@ -56,7 +56,7 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
         String sql_category = "create table if not exists '" + TABLE_NAME + "' (" + SearchId_category
                 + " integer primary key autoincrement," + FileHashName_category + " varchar(255),"
                 + InsertOrder + " integer, "
-                + Jieshao + " text, "
+                + Jieshao + " blob, "
                 + FileName_category + " varchar(255), " + FilePath_category + " varchar(255), " + ListFilesName_category + " varchar(255))" ;
         getWritableDatabase().execSQL(sql_category);
     }
@@ -128,13 +128,16 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
                 //deleteRecordsByFileHashName(fileHashName);
             }
             String sql = "";
-            /*if(categoryJieshao == null){
+            /*blob
+            if(categoryJieshao == null){
                 sql = " insert into '" + TABLE_NAME + "' (" + FileHashName_category + "," + InsertOrder + "," + FileName_category + "," + FilePath_category + ") values ('" + categoryHashName
                         + "','" + categoryInsertOrder + "','" + categoryName + "','" + categoryPath + "')";
             }else{
                 sql = " insert into '" + TABLE_NAME + "' (" + FileHashName_category + "," + InsertOrder + "," + FileName_category + "," + FilePath_category + "," + Jieshao + ") values ('" + categoryHashName
                         + "','" + categoryInsertOrder + "','" + categoryName + "','" + categoryPath + "','" + categoryJieshao.getBytes() + "')";
             }*/
+
+
 
             sql = " insert into '" + TABLE_NAME + "' (" + FileHashName_category + "," + InsertOrder + "," + FileName_category + "," + FilePath_category + "," + Jieshao + ") values ('" + categoryHashName
                     + "','" + categoryInsertOrder + "','" + categoryName + "','" + categoryPath + "','" + categoryJieshao + "')";
@@ -261,9 +264,8 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
         int jieshao = cursor.getColumnIndex(Jieshao);
         if(cursor.getBlob(jieshao) != null){
             /*ByteArrayInputStream stream = new ByteArrayInputStream(
-                    cursor.getBlob(jieshao));*/
-
-            //bean.categoryJieshao = convertStreamToString(stream);
+                    cursor.getBlob(jieshao));
+            bean.categoryJieshao = convertStreamToString(stream);*/
             bean.categoryJieshao = new String(cursor.getString(jieshao));
             Log.d("MyCategoryDB", "into bean.categoryJieshao:" + bean.categoryJieshao);
         }else{

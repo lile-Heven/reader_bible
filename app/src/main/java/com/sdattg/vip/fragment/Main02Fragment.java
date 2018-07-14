@@ -22,10 +22,10 @@ public class Main02Fragment extends BaseTablayoutFtagment2 {
     @Override
     protected List<BaseFragment> getFragmentList() {
         List<BaseFragment> list = new ArrayList<>();
-        Main02Fragment01 main01Fragment= new Main02Fragment01();
-        Main02Fragment01 main02Fragment= new Main02Fragment01();
-        list.add(main01Fragment);
-        list.add(main02Fragment);
+        Main02FragmentBible main01FragmentBible= new Main02FragmentBible();
+        Main02FragmentHuaiZhu main02FragmentHuaiZhu= new Main02FragmentHuaiZhu();
+        list.add(main01FragmentBible);
+        list.add(main02FragmentHuaiZhu);
         return list;
     }
 

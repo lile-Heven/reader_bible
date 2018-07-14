@@ -70,10 +70,12 @@
             android:textSize="13dp" />
 
         <TextView
+            android:id="@+id/tv_more_introduce"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/more_introduce"
             android:background="@drawable/shape_corner"
+            android:textColor="@color/gray4"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             />
