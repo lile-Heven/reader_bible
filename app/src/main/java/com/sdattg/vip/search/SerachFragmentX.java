@@ -218,7 +218,6 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                     //设置LinearLayout属性(宽和高)
                     LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     //设置边距
-                    layoutParams.gravity = Gravity.CENTER_VERTICAL;
                     //将以上的属性赋给LinearLayout
                     linearLayout.setLayoutParams(layoutParams);
                     Log.d("findbug071506", "into createScrollViewQuanBu() 6");
@@ -227,42 +226,59 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                     //实例化一个LinearLayout
                     LinearLayout column = new LinearLayout(getContext());
                     column.setOrientation(LinearLayout.HORIZONTAL);
+                    //column.setBackgroundColor(getResources().getColor(R.color.text_999));
                     //设置LinearLayout属性(宽和高)
                     LinearLayout.LayoutParams columnParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     //设置边距
-                    columnParams.gravity = Gravity.CENTER;
                     //将以上的属性赋给LinearLayout
                     column.setLayoutParams(columnParams);
                     Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 9");
 
+                    linearLayout.addView(column);
+
+
                     ImageView iv = new ImageView(getContext());
                     //设置LinearLayout属性(宽和高)
-                    LinearLayout.LayoutParams ivParams=new LinearLayout.LayoutParams(60, 60);
+                    //LinearLayout.LayoutParams ivParams=new LinearLayout.LayoutParams(60, 60);
                     //将以上的属性赋给LinearLayout
-                    column.setLayoutParams(ivParams);
-                    iv.setBackgroundResource(R.drawable.myicon_correct);
+                    //column.setLayoutParams(ivParams);
+                    iv.setImageResource(R.mipmap.myicon_correct2);
+                    iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-                    Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 10");
+
+
+                    /*Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 10");
                     //实例化一个TextView
                     TextView tv_column = new TextView(getContext());
                     //设置宽高以及权重
                     LinearLayout.LayoutParams tv_columnParams = new LinearLayout.LayoutParams(60, 60);
-                    //LinearLayout.LayoutParams tv_columnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-                    tv_columnParams.setMargins(5, 2, 0, 0);
+                    tv_columnParams.setMargins(200, 2, 0, 0);
                     //设置textview垂直居中
                     tv_columnParams.gravity = Gravity.CENTER;
                     tv_column.setLayoutParams(tv_columnParams);
-                    tv_column.setTextSize(25);
+                    tv_column.setTextSize(60);
                     tv_column.setTextColor(getResources().getColor(R.color.blue));
-                    Log.d("findbug071506", "into createScrollViewQuanBu() foreach() setText() one；" + one);
-                    tv_column.setText(one.substring(one.indexOf("_") + 1));
-
+                    tv_column.setText("测试测试");*/
+                    //实例化一个TextView
+                    TextView tv2 = new TextView(getContext());
+                    //设置宽高以及权重
+                    LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    tvParams.setMargins(5, 2, 0, 0);
+                    //设置textview垂直居中
+                    tvParams.gravity = Gravity.CENTER;
+                    tv2.setTextSize(25);
+                    tv2.setTextColor(getResources().getColor(R.color.text_333));
+                    tv2.setText(one.substring(one.indexOf("_") + 1));
+                    tv2.setLayoutParams(tvParams);
+                    //tv2.setTag(one);
+                    //tv2.setOnClickListener(this);
                     Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 11");
-                    column.addView(iv);
-                    column.addView(tv_column);
+
+                    column.addView(iv); //加上这个imageview就会有幺蛾子
+                    column.addView(tv2);
 
                     Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 12");
-                    linearLayout.addView(column);
+
 
                     MyGridView gv = new MyGridView(getContext());
                     gv.setNumColumns(3);
