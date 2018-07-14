@@ -150,20 +150,37 @@ public class SerachActivity extends BaseActivity {
         switch (category_selected){
             case 0:
                 tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.blue));
+                tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.text_333));
+                tv_sactivity_qita.setTextColor(getResources().getColor(R.color.text_333));
+                tv_sactivity_yingwen.setTextColor(getResources().getColor(R.color.text_333));
+
                 SerachFragmentX serachFragment_X0 = new SerachFragmentX();
                 replaceFragment(serachFragment_X0, R.id.fl);
                 break;
             case 1:
+                tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.blue));
+                tv_sactivity_qita.setTextColor(getResources().getColor(R.color.text_333));
+                tv_sactivity_yingwen.setTextColor(getResources().getColor(R.color.text_333));
+
                 SerachFragmentX serachFragment_X1 = new SerachFragmentX();
                 replaceFragment(serachFragment_X1, R.id.fl);
                 break;
             case 2:
+                tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.text_333));
+                tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_qita.setTextColor(getResources().getColor(R.color.blue));
+                tv_sactivity_yingwen.setTextColor(getResources().getColor(R.color.text_333));
+
                 SerachFragmentX serachFragment_X2 = new SerachFragmentX();
                 replaceFragment(serachFragment_X2, R.id.fl);
                 break;
             case 3:
+                tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.text_333));
+                tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.text_333));
+                tv_sactivity_qita.setTextColor(getResources().getColor(R.color.text_333));
+                tv_sactivity_yingwen.setTextColor(getResources().getColor(R.color.blue));
+
                 tv_sactivity_yingwen.setTextColor(getResources().getColor(R.color.blue));
                 SerachFragmentX serachFragment_X3 = new SerachFragmentX();
                 replaceFragment(serachFragment_X3, R.id.fl);

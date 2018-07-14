@@ -7,7 +7,7 @@
     android:id="@+id/ll_fragmentx_root"
     >
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_40dp"
         android:gravity="center_vertical"
@@ -50,12 +50,12 @@
             android:textSize="@dimen/size_25dp" />
 
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
-    <ScrollView
+    <!--<ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -108,6 +108,6 @@
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
+    </ScrollView>-->
 
 </LinearLayout>
