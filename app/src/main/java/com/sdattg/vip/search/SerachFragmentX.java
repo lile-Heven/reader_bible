@@ -15,11 +15,7 @@ import android.widget.TextView;
 import com.sdattg.vip.MainActivity;
 import com.sdattg.vip.R;
 import com.sdattg.vip.base.BaseFragment;
-import com.sdattg.vip.bean.CategoryBean;
-import com.sdattg.vip.fragment.Main02FragmentBible;
 import com.sdattg.vip.util.FileUtil;
-
-import org.apache.tools.ant.Main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -347,6 +343,8 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                             Log.d("findbug071517", "list_book.get(i)：" + list_book.get(i));
                             SerachActivity.category_selected_str3 = (list_book.get(i));
                             ((SerachActivity)getContext()).updateSelected();
+
+                            ((SerachActivity)getContext()).showReadyToSearch();
                         }
                     });
                     gv.setAdapter(adapter);
@@ -505,6 +503,8 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                         Log.d("findbug071517", "list_book.get(i)：" + list_book.get(i));
                         SerachActivity.category_selected_str3 = (list_book.get(i));
                         ((SerachActivity)getContext()).updateSelected();
+
+                        ((SerachActivity)getContext()).showReadyToSearch();
                     }
                 });
                 gv.setAdapter(adapter);

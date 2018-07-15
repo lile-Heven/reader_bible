@@ -1,10 +1,13 @@
 package com.sdattg.vip.search;
 
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -15,6 +18,7 @@ import com.sdattg.vip.base.BaseActivity;
 import com.sdattg.vip.util.FileUtil;
 
 import java.util.Set;
+import java.util.logging.LogRecord;
 
 
 /**
@@ -29,7 +33,7 @@ public class SerachActivity extends BaseActivity {
 
     public static String category_selected_str1= "01-圣经";
     public static String category_selected_str2= "全部";
-    public static String category_selected_str3= "创世记";
+    public static String category_selected_str3= "";
 
     LinearLayout ll_waitselected ;
     LinearLayout ll_readytosearch ;
@@ -40,6 +44,11 @@ public class SerachActivity extends BaseActivity {
     public static Set<String> shistroys;
     private RadioGroup rg_searchkind;
     private RadioButton rb_book, rb_title, rb_index, rb_content;
+
+    TextView tv_sactivity_searching_title ;
+    ListView lv_sactivity_searching_results ;
+
+    static Handler updateUIHandler;
     @Override
     protected int getLayoutId() {
         return R.layout.serach_activity;
@@ -52,9 +61,27 @@ public class SerachActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
+        updateUIHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 1:
+                        //更新 tv_sactivity_searching_title => text:""
+                        if(tv_sactivity_searching_title != null){
+                            tv_sactivity_searching_title.setText("搜索结果如下：");
+                        }
+                        break;
+                }
+            }
+        };
         ll_waitselected = findViewById(R.id.ll_waitselected);
         ll_readytosearch = findViewById(R.id.ll_readytosearch);
+
+        tv_sactivity_searching_title = findViewById(R.id.tv_sactivity_searching_title);
+        lv_sactivity_searching_results = findViewById(R.id.lv_sactivity_searching_results);
+
+
 
         tv_sactivity_shengjing = findViewById(R.id.tv_sactivity_shengjing);
         tv_sactivity_huaizhu = findViewById(R.id.tv_sactivity_huaizhu);
@@ -99,9 +126,13 @@ public class SerachActivity extends BaseActivity {
                 finish();
             }
         });
+
+
+
         tv_serach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showReadyToSearch();
                 if(TextUtils.isEmpty(et_scontent.getText())){
                     Toast.makeText(SerachActivity.this,"搜索内容为空",Toast.LENGTH_LONG).show();
                 }else{
@@ -109,8 +140,13 @@ public class SerachActivity extends BaseActivity {
                     if(TextUtils.isEmpty(SEARCH_CONTENT)){
                         Toast.makeText(SerachActivity.this,"搜索内容为空",Toast.LENGTH_LONG).show();
                     }else{
-                        Serach2Fragment  serachFragment = new Serach2Fragment();
-                        replaceFragment2(serachFragment,R.id.fl);
+
+                        //Serach2Fragment  serachFragment = new Serach2Fragment();
+                        //replaceFragment2(serachFragment,R.id.fl);
+                        tv_sactivity_searching_title.setText("请稍等，正在搜索...");
+                        String search_content = et_scontent.getText().toString().trim();
+                        SearchingThread searchingThread = new SearchingThread(SerachActivity.this, search_content, category_selected_str1, category_selected_str2, category_selected_str3);
+                        searchingThread.start();
                     }
                 }
 
@@ -238,6 +274,16 @@ public class SerachActivity extends BaseActivity {
                 + "-" + FileUtil.replaceBy_(category_selected_str2).substring(FileUtil.replaceBy_(category_selected_str2 ).indexOf("_") + 1)
                 + "-" + FileUtil.replaceBy_(category_selected_str3).substring(FileUtil.replaceBy_(category_selected_str3 ).indexOf("_") + 1);
         tv_sactivity_selected.setText("已选中：" + category_selected_strs);
+    }
+
+    public void showReadyToSearch(){
+        ll_waitselected.setVisibility(View.INVISIBLE);
+        ll_readytosearch.setVisibility(View.VISIBLE);
+    }
+
+    public void showWaitToSelected(){
+        ll_readytosearch.setVisibility(View.INVISIBLE);
+        ll_waitselected.setVisibility(View.VISIBLE);
     }
 
     @Override
