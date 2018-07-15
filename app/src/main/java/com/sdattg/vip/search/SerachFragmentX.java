@@ -18,6 +18,8 @@ import com.sdattg.vip.bean.CategoryBean;
 import com.sdattg.vip.fragment.Main02FragmentBible;
 import com.sdattg.vip.util.FileUtil;
 
+import org.apache.tools.ant.Main;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,10 +33,11 @@ import java.util.Set;
 /**
  * Created by yinqm on 2018/7/5.
  */
-public class SerachFragmentX extends BaseFragment implements View.OnClickListener{
+public class SerachFragmentX extends BaseFragment implements View.OnClickListener {
     private LinearLayout ll_fragmentx_root;
     private List<TextView> list_tv = new ArrayList<TextView>();
     private List<Map<String, Object>> data_list;
+    private ScrollView scrollView;
 
     @Override
     protected int getLayoutId() {
@@ -49,7 +52,7 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
 
     @Override
     protected void initView(View view) {
-        switch (SerachActivity.category_selected){
+        switch (SerachActivity.category_selected) {
             case 0:
                 querybooks("01-圣经");
                 break;
@@ -72,8 +75,8 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
         Iterator iterator = keySet.iterator();
         String[] keys = new String[keySet.size()];
         int ii = 0;
-        while (iterator.hasNext()){
-            String temp = (String)iterator.next();
+        while (iterator.hasNext()) {
+            String temp = (String) iterator.next();
             keys[ii] = temp;
             ii++;
         }
@@ -89,8 +92,8 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
 
         List<String> keys2 = new ArrayList<>();
         keys2.add("全部");
-        for (String one:
-             keys) {
+        for (String one :
+                keys) {
             keys2.add(one);
         }
 
@@ -100,13 +103,13 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
         LinearLayout linearLayout = new LinearLayout(getContext());
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
         //设置LinearLayout属性(宽和高)
-        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         //设置边距
         layoutParams.gravity = Gravity.CENTER_VERTICAL;
         //将以上的属性赋给LinearLayout
         linearLayout.setLayoutParams(layoutParams);
 
-        for (String one:
+        for (String one :
                 keys2) {
             //实例化一个TextView
             TextView tv = new TextView(getContext());
@@ -128,7 +131,7 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
         HorizontalScrollView hScrollView = new HorizontalScrollView(getContext());
         //scrollView.setHorizontalScrollBarEnabled(false);
         //设置LinearLayout属性(宽和高)
-        HorizontalScrollView.LayoutParams scrolllayoutParams=new HorizontalScrollView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        HorizontalScrollView.LayoutParams scrolllayoutParams = new HorizontalScrollView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         //设置边距
         scrolllayoutParams.gravity = Gravity.CENTER;
         //将以上的属性赋给LinearLayout
@@ -137,34 +140,57 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
         hScrollView.addView(linearLayout);
         ll_fragmentx_root.addView(hScrollView);
 
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //list_tv.get(0).performClick();
+            }
+        }.start();
+
+        list_tv.get(0).performClick();
+
     }
 
     @Override
     public void onClick(View view) {
-        if(view.getTag() != null){
-            if(((String)view.getTag()).equals("全部")){
-                createScrollViewQuanBu((String)view.getTag());
-            }else {
-                //TODO
+        if (view.getTag() != null) {
+            if (((String) view.getTag()).equals("全部")) {
+                if (scrollView != null) {
+                    ll_fragmentx_root.removeView(scrollView);
+                }
+                createScrollViewQuanBu((String) view.getTag());
+            } else {
+                if (scrollView != null) {
+                    ll_fragmentx_root.removeView(scrollView);
+                }
+                createScrollView((String) view.getTag());
             }
         }
     }
 
-    private void createScrollViewQuanBu(String name){
+    private void createScrollViewQuanBu(String name) {
         Log.d("findbug071506", "into createScrollViewQuanBu()");
-        if(ll_fragmentx_root != null){
+        if (ll_fragmentx_root != null) {
             Log.d("findbug071506", "into createScrollViewQuanBu() 1");
-            TextView tv = (TextView)ll_fragmentx_root.findViewWithTag(name);
+            TextView tv = (TextView) ll_fragmentx_root.findViewWithTag(name);
             Log.d("findbug071506", "into createScrollViewQuanBu() 2");
-            if(tv != null){
+            if (tv != null) {
                 Log.d("findbug071506", "into createScrollViewQuanBu() 3");
                 initAllTextViewColor();
                 tv.setTextColor(getResources().getColor(R.color.blue));
 
-                ScrollView scrollView = new ScrollView(getContext());
+
+                scrollView = new ScrollView(getContext());
                 //scrollView.setHorizontalScrollBarEnabled(false);
                 //设置LinearLayout属性(宽和高)
-                ScrollView.LayoutParams scrolllayoutParams=new ScrollView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                ScrollView.LayoutParams scrolllayoutParams = new ScrollView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 //设置边距
                 scrolllayoutParams.gravity = Gravity.CENTER;
                 //将以上的属性赋给LinearLayout
@@ -175,7 +201,7 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                 LinearLayout linearLayout0 = new LinearLayout(getContext());
                 linearLayout0.setOrientation(LinearLayout.VERTICAL);
                 //设置LinearLayout属性(宽和高)
-                LinearLayout.LayoutParams layoutParams0=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams layoutParams0 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 //设置边距
                 layoutParams0.gravity = Gravity.CENTER_VERTICAL;
                 //将以上的属性赋给LinearLayout
@@ -183,13 +209,12 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                 Log.d("findbug071506", "into createScrollViewQuanBu() 5");
 
 
-
                 Set<String> keySet = results.keySet();
                 Iterator iterator = keySet.iterator();
                 String[] keys = new String[keySet.size()];
                 int ii = 0;
-                while (iterator.hasNext()){
-                    String temp = (String)iterator.next();
+                while (iterator.hasNext()) {
+                    String temp = (String) iterator.next();
                     keys[ii] = temp;
                     ii++;
                 }
@@ -204,19 +229,19 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
 
 
                 List<String> keys2 = new ArrayList<>();
-                for (String one:
+                for (String one :
                         keys) {
                     keys2.add(one);
                 }
 
-                for (String one:
-                     keys) {
+                for (String one :
+                        keys) {
                     Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 8");
                     //实例化一个LinearLayout
                     LinearLayout linearLayout = new LinearLayout(getContext());
                     linearLayout.setOrientation(LinearLayout.VERTICAL);
                     //设置LinearLayout属性(宽和高)
-                    LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     //设置边距
                     //将以上的属性赋给LinearLayout
                     linearLayout.setLayoutParams(layoutParams);
@@ -228,13 +253,30 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                     column.setOrientation(LinearLayout.HORIZONTAL);
                     //column.setBackgroundColor(getResources().getColor(R.color.text_999));
                     //设置LinearLayout属性(宽和高)
-                    LinearLayout.LayoutParams columnParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams columnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     //设置边距
                     //将以上的属性赋给LinearLayout
                     column.setLayoutParams(columnParams);
                     Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 9");
 
+                    View space = new View(getContext());
+                    LinearLayout.LayoutParams spaceParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, MainActivity.dip2px(getContext(), 5));
+                    //设置边距
+                    //将以上的属性赋给LinearLayout
+                    space.setLayoutParams(spaceParams);
+                    space.setBackgroundColor(getResources().getColor(R.color.background_color));
+
+                    linearLayout.addView(space);
                     linearLayout.addView(column);
+
+                    View space2 = new View(getContext());
+                    LinearLayout.LayoutParams space2Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, MainActivity.dip2px(getContext(), 1));
+                    //设置边距
+                    //将以上的属性赋给LinearLayout
+                    space2.setLayoutParams(space2Params);
+                    space2.setBackgroundColor(getResources().getColor(R.color.background_color));
+
+                    linearLayout.addView(space2);
 
 
                     ImageView iv = new ImageView(getContext());
@@ -282,13 +324,16 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
 
                     MyGridView gv = new MyGridView(getContext());
                     gv.setNumColumns(3);
+                    gv.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+                    gv.setHorizontalSpacing(2);
+                    gv.setVerticalSpacing(2);
                     //设置LinearLayout属性(宽和高)
-                    MyGridView.LayoutParams gvParams=new MyGridView.LayoutParams(MyGridView.LayoutParams.WRAP_CONTENT, GridView.LayoutParams.WRAP_CONTENT);
+                    MyGridView.LayoutParams gvParams = new MyGridView.LayoutParams(MyGridView.LayoutParams.WRAP_CONTENT, GridView.LayoutParams.WRAP_CONTENT);
                     //将以上的属性赋给LinearLayout
                     gv.setLayoutParams(gvParams);
                     //TODO link datas
                     List<String> list_book = results.get(one);
-                    SimpleAdapter adapter=new SimpleAdapter(getContext(),getData(list_book),R.layout.item_gv,new String[]{"text"},
+                    SimpleAdapter adapter = new SimpleAdapter(getContext(), getData(list_book), R.layout.item_gv, new String[]{"text"},
                             new int[]{R.id.tv_item_gridview});
                     gv.setAdapter(adapter);
 
@@ -312,57 +357,159 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
         }
     }
 
-    private List<Map<String,Object>> getData(List<String> list_book){
+    private List<Map<String, Object>> getData(List<String> list_book) {
 
-        data_list = new ArrayList<Map<String,Object>>();
-        for(int i=0;i<list_book.size();i++){
-            Map<String,Object>map=new HashMap<>();
-            Log.d("findbug071506","list_book.get(i):" + list_book.get(i));
-            map.put("text",((String)list_book.get(i)).substring(((String)list_book.get(i)).indexOf("_") + 1));
+        data_list = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < list_book.size(); i++) {
+            Map<String, Object> map = new HashMap<>();
+            Log.d("findbug071506", "list_book.get(i):" + list_book.get(i));
+            map.put("text", ((String) list_book.get(i)).substring(((String) list_book.get(i)).indexOf("_") + 1));
             data_list.add(map);
         }
         return data_list;
     }
 
-    private void createScrollView(String name){
-        if(ll_fragmentx_root != null){
-            TextView tv = (TextView)ll_fragmentx_root.findViewWithTag(name);
-            if(tv != null){
+    private void createScrollView(String name) {
+        if (ll_fragmentx_root != null) {
+            TextView tv = (TextView) ll_fragmentx_root.findViewWithTag(name);
+            if (tv != null) {
+                Log.d("findbug071506", "into createScrollViewQuanBu() 3");
                 initAllTextViewColor();
                 tv.setTextColor(getResources().getColor(R.color.blue));
 
-                results.keySet();
-
-                //实例化一个LinearLayout
-                LinearLayout linearLayout = new LinearLayout(getContext());
-                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                //设置LinearLayout属性(宽和高)
-                LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                //设置边距
-                layoutParams.gravity = Gravity.CENTER_VERTICAL;
-                //将以上的属性赋给LinearLayout
-                linearLayout.setLayoutParams(layoutParams);
-                //linearLayout.addView();
-
-                ScrollView scrollView = new ScrollView(getContext());
+                scrollView = new ScrollView(getContext());
                 //scrollView.setHorizontalScrollBarEnabled(false);
                 //设置LinearLayout属性(宽和高)
-                ScrollView.LayoutParams scrolllayoutParams=new ScrollView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                ScrollView.LayoutParams scrolllayoutParams = new ScrollView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 //设置边距
                 scrolllayoutParams.gravity = Gravity.CENTER;
                 //将以上的属性赋给LinearLayout
                 scrollView.setLayoutParams(scrolllayoutParams);
+                Log.d("findbug071506", "into createScrollViewQuanBu() 4");
 
-                scrollView.addView(linearLayout);
+                //实例化一个LinearLayout
+                LinearLayout linearLayout0 = new LinearLayout(getContext());
+                linearLayout0.setOrientation(LinearLayout.VERTICAL);
+                //设置LinearLayout属性(宽和高)
+                LinearLayout.LayoutParams layoutParams0 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                //设置边距
+                layoutParams0.gravity = Gravity.CENTER_VERTICAL;
+                //将以上的属性赋给LinearLayout
+                linearLayout0.setLayoutParams(layoutParams0);
+                Log.d("findbug071506", "into createScrollViewQuanBu() 5");
+
+
+                Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 8");
+                //实例化一个LinearLayout
+                LinearLayout linearLayout = new LinearLayout(getContext());
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+                //设置LinearLayout属性(宽和高)
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                //设置边距
+                //将以上的属性赋给LinearLayout
+                linearLayout.setLayoutParams(layoutParams);
+                Log.d("findbug071506", "into createScrollViewQuanBu() 6");
+
+
+                //实例化一个LinearLayout
+                LinearLayout column = new LinearLayout(getContext());
+                column.setOrientation(LinearLayout.HORIZONTAL);
+                //column.setBackgroundColor(getResources().getColor(R.color.text_999));
+                //设置LinearLayout属性(宽和高)
+                LinearLayout.LayoutParams columnParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                //设置边距
+                //将以上的属性赋给LinearLayout
+                column.setLayoutParams(columnParams);
+                Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 9");
+
+                View space = new View(getContext());
+                LinearLayout.LayoutParams spaceParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, MainActivity.dip2px(getContext(), 5));
+                //设置边距
+                //将以上的属性赋给LinearLayout
+                space.setLayoutParams(spaceParams);
+                space.setBackgroundColor(getResources().getColor(R.color.background_color));
+
+                linearLayout.addView(space);
+                linearLayout.addView(column);
+
+                View space2 = new View(getContext());
+                LinearLayout.LayoutParams space2Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, MainActivity.dip2px(getContext(), 1));
+                //设置边距
+                //将以上的属性赋给LinearLayout
+                space2.setLayoutParams(space2Params);
+                space2.setBackgroundColor(getResources().getColor(R.color.background_color));
+
+                linearLayout.addView(space2);
+
+
+                ImageView iv = new ImageView(getContext());
+                //设置LinearLayout属性(宽和高)
+                //LinearLayout.LayoutParams ivParams=new LinearLayout.LayoutParams(60, 60);
+                //将以上的属性赋给LinearLayout
+                //column.setLayoutParams(ivParams);
+                iv.setImageResource(R.mipmap.myicon_correct2);
+                iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+
+                //实例化一个TextView
+                TextView tv2 = new TextView(getContext());
+                //设置宽高以及权重
+                LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                tvParams.setMargins(5, 2, 0, 0);
+                //设置textview垂直居中
+                tvParams.gravity = Gravity.CENTER;
+                tv2.setTextSize(25);
+                tv2.setTextColor(getResources().getColor(R.color.text_333));
+                tv2.setText(name.substring(name.indexOf("_") + 1));
+                tv2.setLayoutParams(tvParams);
+                //tv2.setTag(one);
+                //tv2.setOnClickListener(this);
+                Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 11");
+
+                column.addView(iv); //加上这个imageview就会有幺蛾子
+                column.addView(tv2);
+
+                Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 12");
+
+
+                MyGridView gv = new MyGridView(getContext());
+                gv.setNumColumns(3);
+                gv.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+                gv.setHorizontalSpacing(2);
+                gv.setVerticalSpacing(2);
+                //设置LinearLayout属性(宽和高)
+                MyGridView.LayoutParams gvParams = new MyGridView.LayoutParams(MyGridView.LayoutParams.WRAP_CONTENT, GridView.LayoutParams.WRAP_CONTENT);
+                //将以上的属性赋给LinearLayout
+                gv.setLayoutParams(gvParams);
+                //TODO link datas
+                List<String> list_book = results.get(name);
+                SimpleAdapter adapter = new SimpleAdapter(getContext(), getData(list_book), R.layout.item_gv, new String[]{"text"},
+                        new int[]{R.id.tv_item_gridview});
+                gv.setAdapter(adapter);
+
+                Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 13");
+                linearLayout.addView(gv);
+
+                Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 133");
+                linearLayout0.addView(linearLayout);
+                Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 134");
+
+
+                Log.d("findbug071506", "into createScrollViewQuanBu()  14");
+
+
+                scrollView.addView(linearLayout0);
+                Log.d("findbug071506", "into createScrollViewQuanBu()  15");
 
                 ll_fragmentx_root.addView(scrollView);
+                Log.d("findbug071506", "into createScrollViewQuanBu()  16");
             }
         }
     }
 
-    private void initAllTextViewColor(){
-        for (TextView tv:
-        list_tv) {
+    private void initAllTextViewColor() {
+        for (TextView tv :
+                list_tv) {
             tv.setTextColor(getResources().getColor(R.color.text_333));
         }
     }
@@ -384,8 +531,9 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
 
 
     public static HashMap<String, List<String>> results;
-    public static  List<String> list_xinyue_str;
-    private void querybooks(String dirName){
+    public static List<String> list_xinyue_str;
+
+    private void querybooks(String dirName) {
         MyCategoryDBHelper myCategoryDBHelper = new MyCategoryDBHelper(getContext());
         results = myCategoryDBHelper.getQueryBooks(FileUtil.replaceBy_(dirName), null);
 
