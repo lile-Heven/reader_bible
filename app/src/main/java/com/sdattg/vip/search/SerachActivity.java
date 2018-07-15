@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.sdattg.vip.R;
 import com.sdattg.vip.base.BaseActivity;
+import com.sdattg.vip.util.FileUtil;
 
 import java.util.Set;
 
@@ -20,9 +22,18 @@ import java.util.Set;
  */
 public class SerachActivity extends BaseActivity {
     private ImageView iv_back;
-    private TextView tv_serach;
+    private TextView tv_serach, tv_sactivity_selected;
     private TextView tv_sactivity_shengjing, tv_sactivity_huaizhu, tv_sactivity_qita, tv_sactivity_yingwen;
     public static int category_selected = 0;
+    public static String category_selected_strs= "";
+
+    public static String category_selected_str1= "01-圣经";
+    public static String category_selected_str2= "全部";
+    public static String category_selected_str3= "创世记";
+
+    LinearLayout ll_waitselected ;
+    LinearLayout ll_readytosearch ;
+
     private EditText et_scontent;
     public static int SEARCH_KIND = 3; //0-书籍搜索  1-标题搜索  2-目录搜索  3-内容搜索
     public static String SEARCH_CONTENT = ""; //0-书籍搜索  1-标题搜索  2-目录搜索  3-内容搜索
@@ -41,6 +52,10 @@ public class SerachActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+
+        ll_waitselected = findViewById(R.id.ll_waitselected);
+        ll_readytosearch = findViewById(R.id.ll_readytosearch);
+
         tv_sactivity_shengjing = findViewById(R.id.tv_sactivity_shengjing);
         tv_sactivity_huaizhu = findViewById(R.id.tv_sactivity_huaizhu);
         tv_sactivity_qita = findViewById(R.id.tv_sactivity_qita);
@@ -115,6 +130,7 @@ public class SerachActivity extends BaseActivity {
                     case R.id.rb_book:
                         msg = "书籍搜索";
                         SerachActivity.SEARCH_KIND = 0;
+
                         break;
                     case R.id.rb_title:
                         msg = "标题搜索";
@@ -129,6 +145,8 @@ public class SerachActivity extends BaseActivity {
                         SerachActivity.SEARCH_KIND = 3;
                         break;
                 }
+                ll_waitselected.setVisibility(View.VISIBLE);
+                ll_readytosearch.setVisibility(View.INVISIBLE);
                 /*if(rb_book.getId()==checkedId){
                     msg = "当前选中的性别为:"+male.getText().toString();
                 }
@@ -138,6 +156,22 @@ public class SerachActivity extends BaseActivity {
                 Toast.makeText(getApplication(),"SerachActivity.SEARCH_KIND:" + SerachActivity.SEARCH_KIND,Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        et_scontent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ll_waitselected.setVisibility(View.INVISIBLE);
+                ll_readytosearch.setVisibility(View.VISIBLE);
+                //readyToSearch();
+            }
+        });
+
+        tv_sactivity_selected = findViewById(R.id.tv_sactivity_selected);
+    }
+
+    private void readyToSearch(){
+
     }
 
     @Override
@@ -149,6 +183,8 @@ public class SerachActivity extends BaseActivity {
     protected void iniLogic() {
         switch (category_selected){
             case 0:
+                category_selected_str1 = "01-圣经";
+
                 tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.blue));
                 tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_qita.setTextColor(getResources().getColor(R.color.text_333));
@@ -158,6 +194,8 @@ public class SerachActivity extends BaseActivity {
                 replaceFragment(serachFragment_X0, R.id.fl);
                 break;
             case 1:
+                category_selected_str1 = "02-怀著";
+
                 tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.blue));
                 tv_sactivity_qita.setTextColor(getResources().getColor(R.color.text_333));
@@ -167,6 +205,8 @@ public class SerachActivity extends BaseActivity {
                 replaceFragment(serachFragment_X1, R.id.fl);
                 break;
             case 2:
+                category_selected_str1 = "其他";
+
                 tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_qita.setTextColor(getResources().getColor(R.color.blue));
@@ -176,6 +216,8 @@ public class SerachActivity extends BaseActivity {
                 replaceFragment(serachFragment_X2, R.id.fl);
                 break;
             case 3:
+                category_selected_str1 = "英文";
+
                 tv_sactivity_shengjing.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_huaizhu.setTextColor(getResources().getColor(R.color.text_333));
                 tv_sactivity_qita.setTextColor(getResources().getColor(R.color.text_333));
@@ -187,7 +229,15 @@ public class SerachActivity extends BaseActivity {
                 break;
         }
 
+        updateSelected();
 
+    }
+
+    public void updateSelected(){
+        category_selected_strs = FileUtil.replaceBy_(category_selected_str1 ).substring(FileUtil.replaceBy_(category_selected_str1 ).indexOf("_") + 1)
+                + "-" + FileUtil.replaceBy_(category_selected_str2).substring(FileUtil.replaceBy_(category_selected_str2 ).indexOf("_") + 1)
+                + "-" + FileUtil.replaceBy_(category_selected_str3).substring(FileUtil.replaceBy_(category_selected_str3 ).indexOf("_") + 1);
+        tv_sactivity_selected.setText("已选中：" + category_selected_strs);
     }
 
     @Override

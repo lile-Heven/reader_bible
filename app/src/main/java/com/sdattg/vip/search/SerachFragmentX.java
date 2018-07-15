@@ -3,6 +3,7 @@ package com.sdattg.vip.search;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -161,6 +162,11 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         if (view.getTag() != null) {
+
+            SerachActivity.category_selected_str2 = ((String) view.getTag());
+            SerachActivity.category_selected_str3 = "";
+            ((SerachActivity)getContext()).updateSelected();
+
             if (((String) view.getTag()).equals("全部")) {
                 if (scrollView != null) {
                     ll_fragmentx_root.removeView(scrollView);
@@ -332,9 +338,17 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                     //将以上的属性赋给LinearLayout
                     gv.setLayoutParams(gvParams);
                     //TODO link datas
-                    List<String> list_book = results.get(one);
+                    final List<String> list_book = results.get(one);
                     SimpleAdapter adapter = new SimpleAdapter(getContext(), getData(list_book), R.layout.item_gv, new String[]{"text"},
                             new int[]{R.id.tv_item_gridview});
+                    gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            Log.d("findbug071517", "list_book.get(i)：" + list_book.get(i));
+                            SerachActivity.category_selected_str3 = (list_book.get(i));
+                            ((SerachActivity)getContext()).updateSelected();
+                        }
+                    });
                     gv.setAdapter(adapter);
 
                     Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 13");
@@ -482,9 +496,17 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                 //将以上的属性赋给LinearLayout
                 gv.setLayoutParams(gvParams);
                 //TODO link datas
-                List<String> list_book = results.get(name);
+                final List<String> list_book = results.get(name);
                 SimpleAdapter adapter = new SimpleAdapter(getContext(), getData(list_book), R.layout.item_gv, new String[]{"text"},
                         new int[]{R.id.tv_item_gridview});
+                gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Log.d("findbug071517", "list_book.get(i)：" + list_book.get(i));
+                        SerachActivity.category_selected_str3 = (list_book.get(i));
+                        ((SerachActivity)getContext()).updateSelected();
+                    }
+                });
                 gv.setAdapter(adapter);
 
                 Log.d("findbug071506", "into createScrollViewQuanBu() foreach() 13");
