@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.sdattg.vip.base.BaseTablayoutActivity;
 import com.sdattg.vip.bean.CategoryBean;
+import com.sdattg.vip.bean.InitDatas;
 import com.sdattg.vip.myviews.NumberProgressBar;
 import com.sdattg.vip.myviews.OnProgressBarListener;
 import com.sdattg.vip.search.MyCategoryDBHelper;
@@ -222,6 +223,10 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
                         //startActivity(intent);
+                        Toast.makeText(GuideActivity.this, "取消", Toast.LENGTH_SHORT).show();
+                        InitDatas initDatas = new InitDatas();
+                        //initDatas.getChapters(new File(ZipTool.APP_DIR_UNZIP + "/01-书库/02-怀著/07-布道/01-{}布道论/13-第13章 个人之工.txt"));
+                        //initDatas.getChapters(new File(ZipTool.APP_DIR_UNZIP + "/01-书库/01-圣经/01-旧约/01-创世记/001-第01章.txt"));
                     }
                 })
                 .create();
@@ -270,8 +275,8 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
     }*/
 
     private boolean loadCategory2(String path) {
-
-        if (FileUtil.isFileExist(path)) {
+        FileUtil fileUtil = new FileUtil();
+        if (fileUtil.isPathAvailable(path)) {
             File rootDirFile = new File(path);
             if (rootDirFile.isDirectory()) {
                 /*String listFilesNames = "";

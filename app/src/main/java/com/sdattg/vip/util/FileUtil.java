@@ -1,5 +1,6 @@
 package com.sdattg.vip.util;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -15,9 +16,19 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FileUtil {
-    public static boolean isFileExist(String path){
-        File file = new File(path);
-        return file.exists();
+    private String TAG = this.getClass().getSimpleName();
+    public boolean isPathAvailable(String path){
+        if(!TextUtils.isEmpty(path)){
+            if((new File(path)).exists()){
+                return true;
+            }else{
+                Log.w(TAG, "into initSQLite() new File(rootPath)).exists() is false");
+                return false;
+            }
+        }else{
+            Log.w(TAG, "into initSQLite() TextUtils.isEmpty(rootPath) is true");
+            return false;
+        }
     }
 
     public static String replaceBy_(String name){
