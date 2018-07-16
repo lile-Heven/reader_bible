@@ -54,23 +54,25 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
     }
 
     private boolean initViews() {
-        Log.d("GuideActivity", "into initViews()");
+        Log.d("findbug0717", "into initViews()");
         final EditText et_queryname = findViewById(R.id.et_queryname);
         findViewById(R.id.bt_show).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("GuideActivity", "into onClick()");
+                Log.d("findbug0717", "into onClick()");
                 NewCategoryDBHelper dbHelper = new NewCategoryDBHelper(NewGuideActivity.this);
                 if (dbHelper != null) {
                     String name = FileUtil.replaceBy_(et_queryname.getText().toString().trim());
-                    List<CategoryBean> list = myCategoryDBHelper.getCategory(name, null);
-                    for (CategoryBean categoryBean :
+                    List<String> list = dbHelper.getBooks();
+                    //List<CategoryBean> list = myCategoryDBHelper.getCategory(name, null);
+                    for (String one :
                             list) {
                         //Log.d("GuideActivity", categoryBean.categoryHashName + ", " + categoryBean.categoryPath + ", " + categoryBean.categoryName);
                         //Toast.makeText(GuideActivity.this, "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName, Toast.LENGTH_SHORT).show();
-                        Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
+                        Log.d("findbug0717", "one book:" + one);
                     }
                 }
+                dbHelper.close();
 
             }
         });
@@ -80,26 +82,23 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
         findViewById(R.id.bt_contains).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("GuideActivity", "into onClick() bt_contains");
-                if (myCategoryDBHelper != null) {
+                Log.d("findbug0717", "into onClick() bt_contains");
+                NewCategoryDBHelper dbHelper = new NewCategoryDBHelper(NewGuideActivity.this);
+                if (dbHelper != null) {
                     //myCategoryDBHelper = new MyCategoryDBHelper(GuideActivity.this);
                     //String categoryHashName = FileUtil.getMD5Checksum(et_queryname.getText().toString().trim());
-                    String table = FileUtil.replaceBy_(et_table.getText().toString().trim());
+                    /*String table = FileUtil.replaceBy_(et_table.getText().toString().trim());
                     String like = FileUtil.replaceBy_(et_like.getText().toString().trim());
                     for (String table2:
-                    myCategoryDBHelper.getAllTables()) {
-                        List<CategoryBean> list = myCategoryDBHelper.getContains(table2, "Content", like);
+                            dbHelper.getAllTables()) {
+                        List<CategoryBean> list = dbHelper.getContains(table2, "Content", like);
                         Log.d("findbug0716", "list.size():" + list.size());
                         for (CategoryBean categoryBean :
                                 list) {
-                            //Log.d("GuideActivity", categoryBean.categoryHashName + ", " + categoryBean.categoryPath + ", " + categoryBean.categoryName);
-                            //Toast.makeText(GuideActivity.this, "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName, Toast.LENGTH_SHORT).show();
-                            //Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
                         }
-                    }
-
-
+                    }*/
                 }
+                dbHelper.close();
 
             }
         });
@@ -165,8 +164,23 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
     }
 
     private boolean initSQLite(String rootPath) {
+        Log.d("findbug0717", "into initSQLite()");
+        SharePreferencesUtil.getSQliteDatas(getApplicationContext());
         InitDatas init = new InitDatas();
-        return init.init(new NewCategoryDBHelper(this), rootPath, "unzip");
+        boolean done = init.init(new NewCategoryDBHelper(this), rootPath, "unzip");
+        if(InitDatas.hasSQliteDatasInitOnce){
+
+        }else{
+            SharePreferencesUtil.setSQliteDatasInitOnceTrue(getApplicationContext());
+        }
+
+        if(InitDatas.hasNotDone == 0){
+            SharePreferencesUtil.setHasAllDoneTrue(getApplicationContext());
+        }else{
+            InitDatas.hasNotDone = 0;
+        }
+        Log.d("findbug0717", "done initSQLite()");
+        return done;
     }
 
     private void updateDialog() {
@@ -189,13 +203,12 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
                             }
                         }, 1000, 100);
                         unZip();
-                        initSQLite(ZipTool.APP_DIR_UNZIP);
                         if (initSQLite(ZipTool.APP_DIR_UNZIP)) {
-                            Toast.makeText(NewGuideActivity.this, "loadCategory done.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(NewGuideActivity.this, "loadCategory done.", Toast.LENGTH_LONG).show();
                             //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
                             //startActivity(intent);
                         } else {
-                            Toast.makeText(NewGuideActivity.this, "loadCategory failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(NewGuideActivity.this, "loadCategory failed.", Toast.LENGTH_LONG).show();
                         }
                     }
                 })

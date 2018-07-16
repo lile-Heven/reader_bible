@@ -1,10 +1,12 @@
 package com.sdattg.vip.bean;
 
+import android.database.Cursor;
 import android.util.Log;
 
 import com.sdattg.vip.search.MyCategoryDBHelper;
 import com.sdattg.vip.search.NewCategoryDBHelper;
 import com.sdattg.vip.util.FileUtil;
+import com.sdattg.vip.util.SharePreferencesUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,7 +14,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InitDatas {
     private String unzip = "unzip";
@@ -23,6 +27,7 @@ public class InitDatas {
 
 
     public static String column_jieshao = "jieshao";
+    public static String column_jieshao2 = "jianjie";
     public static String column_chapter = "chapter";
 
     public static String column_paragraphIndex = "paragraphIndex";
@@ -30,22 +35,43 @@ public class InitDatas {
 
     public static String table_books = "books";
 
-    public boolean init(NewCategoryDBHelper DBhalper, String rootPath, String tableName){
-        initNewCategoryBean(DBhalper, rootPath, tableName);
+    public static boolean onlyUpdateJieShao = true;
+    public static boolean hasSQliteDatasInitOnce = false;
+
+    public static int hasNotDone = 0;
+    public static boolean hasAllDone = false;
+
+
+    public boolean init(NewCategoryDBHelper DBhalper, String rootPath, String tableName) {
+
+        if (hasSQliteDatasInitOnce) {
+            initFromBooks(DBhalper);
+        } else {
+            initNewCategoryBean(DBhalper, rootPath, tableName);
+        }
+        DBhalper.close();
         return true;
     }
 
     public void initNewCategoryBean(NewCategoryDBHelper DBhalper, String rootPath, String tableName) {
+        Log.d("findbug0717", "into initNewCategoryBean()");
+
+
         FileUtil fileUtil = new FileUtil();
         if (fileUtil.isPathAvailable(rootPath)) {
-            File[] files = new File(rootPath).listFiles();
+            DBhalper.deleteTable(table_books);
+            DBhalper.createBooksTable(table_books, column_id, column_path, column_name);
 
+            File[] files = new File(rootPath).listFiles();
+            files = FileUtil.orderByName(files);
             if (files[0] != null && files[0].getName().endsWith(".txt")) {
+                addToBooksTable(DBhalper, rootPath, tableName);
                 //此时已经进入到书籍目录
                 initOneBook(DBhalper, rootPath, tableName);
             } else {
                 for (File file :
                         files) {
+                    DBhalper.deleteTable(tableName);
                     DBhalper.createNewCategoryBeanTable(tableName,
                             column_id,
                             column_name,
@@ -65,9 +91,69 @@ public class InitDatas {
         }
     }
 
-    private void initOneBook(NewCategoryDBHelper DBhalper, String bookPath, String bookName) {
+    private void initFromBooks(NewCategoryDBHelper DBhalper) {
+        if(hasAllDone){
+            return;
+        }
+        if (onlyUpdateJieShao) {
+            return;
+        }
+        List<String> books_list = new ArrayList<String>();
+        Cursor cursor = DBhalper.getWritableDatabase().rawQuery("select '" + InitDatas.column_name + "' from '" + table_books + "'", null);
+        Log.d("findbug0717", "into hasJieShao");
+        if (cursor != null) {
+            Log.d("findbug0717", "into hasJieShao cursor.getCount():" + cursor.getCount());
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                String name = cursor.getString(cursor.getColumnIndex(InitDatas.column_name));
+                String path = cursor.getString(cursor.getColumnIndex(InitDatas.column_path));
+                initOneBook(DBhalper, path, name);
+                cursor.moveToNext();
+                while (!cursor.isAfterLast()) {
+                    String name2 = cursor.getString(cursor.getColumnIndex(InitDatas.column_name));
+                    String path2 = cursor.getString(cursor.getColumnIndex(InitDatas.column_path));
+                    initOneBook(DBhalper, path2, name2);
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }
+
+    }
+
+    public void initOneBook(NewCategoryDBHelper DBhalper, String bookPath, String bookName) {
         FileUtil fileUtil = new FileUtil();
         if (fileUtil.isPathAvailable(bookPath)) {
+            if (isBookDone(DBhalper, bookPath, bookName)) {
+                return;
+            }
+            hasNotDone++;
+            File[] files = null;
+
+            if (!hasJieShao(DBhalper, bookPath, bookName)) {
+                files = new File(bookPath).listFiles();
+                files = FileUtil.orderByName(files);
+                for (File file :
+                        files) {
+                    if (file.getName().contains(column_jieshao) || file.getName().contains(column_jieshao2)) {
+                        String jieshao = getJieShao(file);
+                        NewBookBean bean_jieshao = new NewBookBean();
+                        bean_jieshao.chapter = column_jieshao;
+                        bean_jieshao.path = column_jieshao;
+                        bean_jieshao.parentPath = column_jieshao;
+                        bean_jieshao.jieshao = jieshao;
+                        DBhalper.insertData(bookName, bean_jieshao);
+                        hasJieShao(DBhalper, bookPath, bookName);
+                        Log.d("findbug0717", "DBhalper.insertData(bookName, bean_jieshao) bookName:" + bookName);
+                    }
+                }
+            }
+
+
+            if (onlyUpdateJieShao) {
+                return;
+            }
+            //DBhalper.deleteTable(bookName);
             DBhalper.createBookBeanTable(bookName,
                     column_id,
                     column_chapter,
@@ -75,44 +161,39 @@ public class InitDatas {
                     column_parentPath,
                     column_jieshao);
 
-            File[] files = new File(bookPath).listFiles();
-            String jieshao = "";
-            for (File file :
-                    files) {
-                if (file.getName().contains("jieshao")) {
-                    jieshao = getJieShao(file);
+            files = new File(bookPath).listFiles();
+            files = FileUtil.orderByName(files);
 
-                }
-            }
-
-            NewBookBean bean_jieshao = new NewBookBean();
-            bean_jieshao.chapter = "jieshao";
-            bean_jieshao.path = "jieshao";
-            bean_jieshao.parentPath = "jieshao";
-            bean_jieshao.jieshao = jieshao;
-            DBhalper.insertData(bookName, bean_jieshao);
-
-
-            jieshao = "";
             for (File file :
                     files) {
                 NewBookBean bean = new NewBookBean();
                 bean.chapter = FileUtil.replaceBy_(file.getName());
                 bean.path = file.getAbsolutePath();
                 bean.parentPath = new File(bookPath).getAbsolutePath();
-                bean.jieshao = jieshao;
+                bean.jieshao = "";
                 DBhalper.insertData(bookName, bean);
 
                 initOneChapter(DBhalper, bean.path, bean.chapter);
             }
-        }
 
-        addToBooksTable(DBhalper, bookName);
+            NewBookBean bean = new NewBookBean();
+            bean.chapter = "520520";
+            bean.path = "520520";
+            bean.parentPath = "520520";
+            bean.jieshao = "520520";
+            DBhalper.insertData(bookName, bean);
+
+
+        }
     }
 
     private void initOneChapter(NewCategoryDBHelper DBhalper, String chapterPath, String chapterName) {
         FileUtil fileUtil = new FileUtil();
         if (fileUtil.isPathAvailable(chapterPath)) {
+            if (isChapterDone(DBhalper, chapterPath, chapterName)) {
+                return;
+            }
+            DBhalper.deleteTable(chapterName);
             DBhalper.createChapterBeanTable(chapterName,
                     column_id,
                     column_paragraphIndex,
@@ -131,14 +212,14 @@ public class InitDatas {
                 initOneChapter(DBhalper, bean.path, bean.chapter);
             }*/
             HashMap<Integer, String> chaptersMap = getChapters(new File(chapterPath));
-            if(chaptersMap != null){
-                if(chaptersMap.size() > 0){
+            if (chaptersMap != null) {
+                if (chaptersMap.size() > 0) {
                     NewChapterBean bean = new NewChapterBean();
                     bean.paragraphIndex = chaptersMap.size() + "";
                     bean.paragraphContent = "#count#";
                     DBhalper.insertData(chapterName, bean);
                 }
-                for (int i = 1; i < chaptersMap.size(); i++){
+                for (int i = 1; i < chaptersMap.size(); i++) {
                     String paragraphContent = chaptersMap.get(i);
 
                     NewChapterBean bean = new NewChapterBean();
@@ -146,6 +227,11 @@ public class InitDatas {
                     bean.paragraphContent = paragraphContent;
                     DBhalper.insertData(chapterName, bean);
                 }
+
+                NewChapterBean bean = new NewChapterBean();
+                bean.paragraphIndex = 520520 + "";
+                bean.paragraphContent = "520520";
+                DBhalper.insertData(chapterName, bean);
             }
 
         }
@@ -154,9 +240,9 @@ public class InitDatas {
     }
 
     public HashMap<Integer, String> getChapters(File file) {
-        Log.d("fingbug0717", "into getChapters:" + file);
-        if(!file.exists()){
-            Log.w("fingbug0717", "into getChapters !file.exists()");
+        Log.d("findbug0717", "into getChapters:" + file);
+        if (!file.exists()) {
+            Log.w("findbug0717", "into getChapters !file.exists()");
             return null;
         }
         HashMap<Integer, String> chaptersMap = new HashMap<Integer, String>();
@@ -239,15 +325,73 @@ public class InitDatas {
                 e.printStackTrace();
             }
         }
-        Log.d("GuideActivity", "has jieshao:" + jieshao + " jieshao.length():" + jieshao.length());
+        //Log.d("GuideActivity", "has jieshao:" + jieshao + " jieshao.length():" + jieshao.length());
         return jieshao;
     }
 
-    private void addToBooksTable(NewCategoryDBHelper DBhalper, String bookName){
-        DBhalper.createBooksTable(table_books, column_id, column_name);
-        DBhalper.insertData(table_books, column_name);
+    private void addToBooksTable(NewCategoryDBHelper DBhalper, String bookPath, String bookName) {
+        if (DBhalper.IsHasData(table_books, InitDatas.column_path, bookPath)) {//已经存在了，先删除
+            DBhalper.delete(table_books, InitDatas.column_path, bookPath);
+        }
+        String sql = " insert into '" + table_books + "' (" + InitDatas.column_path + "," + InitDatas.column_name + ") values ('" + bookPath + "', '" + bookName + "')";
+        DBhalper.getWritableDatabase().execSQL(sql);
 
-        DBhalper.close();
+
+    }
+
+
+    private boolean isChapterDone(NewCategoryDBHelper DBhalper, String chapterPath, String chapterName) {
+        DBhalper.createChapterBeanTable(chapterName,
+                column_id,
+                column_paragraphIndex,
+                column_paragraphContent);
+
+        Cursor cursor = DBhalper.getWritableDatabase().rawQuery("select * from '" + chapterName + "' where " + InitDatas.column_paragraphIndex + " = " + "'" + 520520 + "'", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                //String done = cursor.getString(cursor.getColumnIndex(InitDatas.column_paragraphIndex));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isBookDone(NewCategoryDBHelper DBhalper, String bookPath, String bookName) {
+        DBhalper.createBookBeanTable(bookName,
+                column_id,
+                column_chapter,
+                column_path,
+                column_parentPath,
+                column_jieshao);
+
+        Cursor cursor = DBhalper.getWritableDatabase().rawQuery("select * from '" + bookName + "' where " + InitDatas.column_chapter + " = " + "'" + 520520 + "'", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                //String done = cursor.getString(cursor.getColumnIndex(InitDatas.column_paragraphIndex));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasJieShao(NewCategoryDBHelper DBhalper, String bookPath, String bookName) {
+        DBhalper.createBookBeanTable(bookName,
+                column_id,
+                column_chapter,
+                column_path,
+                column_parentPath,
+                column_jieshao);
+
+        Cursor cursor = DBhalper.getWritableDatabase().rawQuery("select * from '" + bookName + "' where " + InitDatas.column_chapter + " = " + "'" + column_jieshao + "'", null);
+        Log.d("findbug0717", "into hasJieShao");
+        if (cursor != null) {
+            Log.d("findbug0717", "into hasJieShao cursor.getCount():" + cursor.getCount() + ", bookName:" + bookName);
+            if (cursor.getCount() > 0) {
+                //String done = cursor.getString(cursor.getColumnIndex(InitDatas.column_paragraphIndex));
+                return true;
+            }
+        }
+        return false;
     }
 
 }

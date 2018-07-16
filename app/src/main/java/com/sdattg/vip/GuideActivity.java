@@ -312,7 +312,7 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
                             while ((count = fileInputStream.read(bytes)) != -1) {
                                 temp += new String(bytes, 0, count, "gbk");
                             }
-                            Log.d("GuideActivity", "has jieshao temp:" + temp);
+                            //Log.d("GuideActivity", "has jieshao temp:" + temp);
                             /*fileInputStream = new FileInputStream(tempFiles[0]);
                             inputStreamReader = new InputStreamReader(fileInputStream);
                             bufferReader = new BufferedReader(inputStreamReader);

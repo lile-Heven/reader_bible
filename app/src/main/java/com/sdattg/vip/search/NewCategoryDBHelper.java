@@ -98,11 +98,12 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         getWritableDatabase().execSQL(sql);
     }
 
-    public void createBooksTable(String TABLE_NAME, String column_id, String column_name){
+    public void createBooksTable(String TABLE_NAME, String column_id, String column_path, String column_name){
         String sql = "create table if not exists '" + TABLE_NAME + "' "
                 + "("
                 + column_id + " integer primary key autoincrement,"
-                + column_name + " varchar(255), "
+                + column_path + " varchar(255), "
+                + column_name + " varchar(255) "
                 + ")";
         getWritableDatabase().execSQL(sql);
     }
@@ -131,8 +132,8 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "'" + TABLE_NAME + "'");
     }
 
-    private void delete(String TABLE_NAME, String colomn, String path) {
-        String sql = "delete from " + TABLE_NAME + " where " + colomn + " = " + "'" + path + "'";
+    public void delete(String TABLE_NAME, String colomn, String path) {
+        String sql = "delete from '" + TABLE_NAME + "' where " + colomn + " = " + "'" + path + "'";
         getWritableDatabase().execSQL(sql);
     }
 
@@ -142,10 +143,13 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public void insertData(String TABLE_NAME, String book_name) {
-        String sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_name + ") values ('" + book_name + "')";
+    /*public void insertData(String TABLE_NAME, String bookPath, String book_name) {
+        if (IsHasData(TABLE_NAME, InitDatas.column_path, bookPath)) {//已经存在了，先删除
+            delete(TABLE_NAME, InitDatas.column_path, bookPath);
+        }
+        String sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_path + "," + InitDatas.column_name + ") values ('" + book_name + "')";
         getWritableDatabase().execSQL(sql);
-    }
+    }*/
 
     public void insertData(String TABLE_NAME, NewChapterBean bean) {
         insertData(TABLE_NAME
@@ -156,9 +160,15 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
 
     private void insertData(String TABLE_NAME, String paragraphIndex, String paragraphContent) {
 
-        String sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_chapter + "," + InitDatas.column_path + "," + InitDatas.column_parentPath + InitDatas.column_jieshao + ") values ('" + paragraphIndex
+        String sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_paragraphIndex + "," + InitDatas.column_paragraphContent + ") values ('" + paragraphIndex
                 + "','" + paragraphContent + "')";
-        getWritableDatabase().execSQL(sql);
+        try{
+            getWritableDatabase().execSQL(sql);
+        }catch (Exception e){
+            sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_paragraphIndex + "," + InitDatas.column_paragraphContent + ") values ('" + paragraphIndex
+                    + "','" + paragraphContent.replace("'", "_") + "')";
+            getWritableDatabase().execSQL(sql);
+        }
     }
 
     public void insertData(String TABLE_NAME, NewBookBean bean) {
@@ -174,7 +184,7 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         if (IsHasData(TABLE_NAME, InitDatas.column_path, path)) {//已经存在了，先删除
             delete(TABLE_NAME, InitDatas.column_path, path);
         }
-        String sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_chapter + "," + InitDatas.column_path + "," + InitDatas.column_parentPath + InitDatas.column_jieshao + ") values ('" + chapter
+        String sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_chapter + "," + InitDatas.column_path + "," + InitDatas.column_parentPath + "," +  InitDatas.column_jieshao + ") values ('" + chapter
                 + "','" + path + "','" + parentPath + "','" + jieshao + "')";
         getWritableDatabase().execSQL(sql);
     }
@@ -197,7 +207,7 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         getWritableDatabase().execSQL(sql);
     }
 
-    private Boolean IsHasData(String TABLE_NAME, String column, String path) {
+    public Boolean IsHasData(String TABLE_NAME, String column, String path) {
         Cursor cursor = getCursorByKeyValue(TABLE_NAME, column, path);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
@@ -209,6 +219,27 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public List<String> getBooks(){
+        List<String> books = new ArrayList<>();
+        Cursor cursor = getWritableDatabase().rawQuery("select * from '" + InitDatas.table_books + "'", null);
+        if (cursor != null) {
+            Log.d("NewCategoryDB", "into getBooks()" + cursor.getCount() + "");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                books.add(cursor.getString(cursor.getColumnIndex(InitDatas.column_name)));
+                cursor.moveToNext();
+                while (!cursor.isAfterLast()) {
+                    books.add(cursor.getString(cursor.getColumnIndex(InitDatas.column_name)));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }else{
+            Log.d("NewCategoryDB", "into getCategory cursor == null ");
+        }
+        Log.d("NewCategoryDB", "books.size():" + books.size());
+        return books;
+    }
 
     /**
      * @param categoryHashName 文件hash值
