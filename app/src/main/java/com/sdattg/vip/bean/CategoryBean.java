@@ -8,6 +8,8 @@ public class CategoryBean {
     public String categoryPath;
     public String categoryListFilesName;
     public String categoryJieshao;
+    public String categoryContent;
+
 
     @Override
     public String toString() {
@@ -19,6 +21,7 @@ public class CategoryBean {
                 ", categoryPath='" + categoryPath + '\'' +
                 ", categoryListFilesName='" + categoryListFilesName + '\'' +
                 ", categoryJieshao='" + categoryJieshao + '\'' +
+                ", categoryContent='" + categoryContent + '\'' +
                 '}';
     }
 }

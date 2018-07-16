@@ -29,6 +29,7 @@ import com.sdattg.vip.util.SharePreferencesUtil;
 import org.apache.tools.ant.Main;
 import org.apache.tools.ant.util.ReaderInputStream;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,6 +37,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,7 +48,7 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.WRITE_EXTERNAL_STORAGE" };
+            "android.permission.WRITE_EXTERNAL_STORAGE"};
     private MyCategoryDBHelper myCategoryDBHelper;
     private NumberProgressBar bnp;
     private Timer timer;
@@ -60,23 +63,24 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
         initDatas();
     }
 
-    private void initSQLite(){
+    private void initSQLite() {
         myCategoryDBHelper = new MyCategoryDBHelper(this);
+
     }
 
-    private boolean initViews(){
+    private boolean initViews() {
         Log.d("GuideActivity", "into initViews()");
         final EditText et_queryname = findViewById(R.id.et_queryname);
         findViewById(R.id.bt_show).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("GuideActivity", "into onClick()");
-                if(myCategoryDBHelper != null){
+                if (myCategoryDBHelper != null) {
                     //myCategoryDBHelper = new MyCategoryDBHelper(GuideActivity.this);
                     //String categoryHashName = FileUtil.getMD5Checksum(et_queryname.getText().toString().trim());
                     String name = FileUtil.replaceBy_(et_queryname.getText().toString().trim());
                     List<CategoryBean> list = myCategoryDBHelper.getCategory(name, null);
-                    for (CategoryBean categoryBean:
+                    for (CategoryBean categoryBean :
                             list) {
                         //Log.d("GuideActivity", categoryBean.categoryHashName + ", " + categoryBean.categoryPath + ", " + categoryBean.categoryName);
                         //Toast.makeText(GuideActivity.this, "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName, Toast.LENGTH_SHORT).show();
@@ -93,24 +97,30 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
             @Override
             public void onClick(View view) {
                 Log.d("GuideActivity", "into onClick() bt_contains");
-                if(myCategoryDBHelper != null){
+                if (myCategoryDBHelper != null) {
                     //myCategoryDBHelper = new MyCategoryDBHelper(GuideActivity.this);
                     //String categoryHashName = FileUtil.getMD5Checksum(et_queryname.getText().toString().trim());
                     String table = FileUtil.replaceBy_(et_table.getText().toString().trim());
                     String like = FileUtil.replaceBy_(et_like.getText().toString().trim());
-                    List<CategoryBean> list = myCategoryDBHelper.getContains(table, "FileName_category", like);
-                    for (CategoryBean categoryBean:
-                            list) {
-                        //Log.d("GuideActivity", categoryBean.categoryHashName + ", " + categoryBean.categoryPath + ", " + categoryBean.categoryName);
-                        //Toast.makeText(GuideActivity.this, "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName, Toast.LENGTH_SHORT).show();
-                        Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
+                    for (String table2:
+                    myCategoryDBHelper.getAllTables()) {
+                        List<CategoryBean> list = myCategoryDBHelper.getContains(table2, "Content", like);
+                        Log.d("findbug0716", "list.size():" + list.size());
+                        for (CategoryBean categoryBean :
+                                list) {
+                            //Log.d("GuideActivity", categoryBean.categoryHashName + ", " + categoryBean.categoryPath + ", " + categoryBean.categoryName);
+                            //Toast.makeText(GuideActivity.this, "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName, Toast.LENGTH_SHORT).show();
+                            //Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
+                        }
                     }
+
+
                 }
 
             }
         });
 
-        bnp = (NumberProgressBar)findViewById(R.id.number_progressbar1);
+        bnp = (NumberProgressBar) findViewById(R.id.number_progressbar1);
         bnp.setOnProgressBarListener(this);
 
         return false;
@@ -118,16 +128,16 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
 
     @Override
     public void onProgressChange(int current, int max) {
-        if(current == max) {
+        if (current == max) {
             //Toast.makeText(getApplicationContext(), getString(R.string.finish), Toast.LENGTH_SHORT).show();
             bnp.setProgress(0);
         }
     }
 
-    private boolean initDatas(){
+    private boolean initDatas() {
         checkMyPermission();
 
-        if(SharePreferencesUtil.isFristRun(this)){
+        if (SharePreferencesUtil.isFristRun(this)) {
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -143,16 +153,18 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
             unZip();
             Toast.makeText(this, "unzip done.", Toast.LENGTH_SHORT).show();
             //开始加载解压后的数据
-            if(loadCategory2(ZipTool.APP_DIR_UNZIP)){
+            myCategoryDBHelper.deleteTable(MyCategoryDBHelper.MyAllCategoryTAble);
+            myCategoryDBHelper.createAllCategoryTable(MyCategoryDBHelper.MyAllCategoryTAble);
+            if (loadCategory2(ZipTool.APP_DIR_UNZIP)) {
                 myCategoryDBHelper.close();
                 Toast.makeText(GuideActivity.this, "loadCategory done.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(GuideActivity.this, MainActivity.class);
-                startActivity(intent);
-            }else{
+                //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
+                //startActivity(intent);
+            } else {
                 Toast.makeText(GuideActivity.this, "loadCategory failed.", Toast.LENGTH_SHORT).show();
             }
 
-        }else{
+        } else {
             updateDialog();
             /*new Thread(){
                 @Override
@@ -171,11 +183,11 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
         return false;
     }
 
-    private void updateDialog(){
+    private void updateDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("提示：")
                 .setMessage("是否更新书籍数据库？")
-                .setPositiveButton("确 定", new DialogInterface.OnClickListener(){
+                .setPositiveButton("确 定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         timer = new Timer();
@@ -193,12 +205,14 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
                         unZip();
                         Toast.makeText(GuideActivity.this, "unzip done.", Toast.LENGTH_SHORT).show();
                         //开始加载解压后的数据
-                        if(loadCategory2(ZipTool.APP_DIR_UNZIP)){
+                        myCategoryDBHelper.deleteTable(MyCategoryDBHelper.MyAllCategoryTAble);
+                        myCategoryDBHelper.createAllCategoryTable(MyCategoryDBHelper.MyAllCategoryTAble);
+                        if (loadCategory2(ZipTool.APP_DIR_UNZIP)) {
                             myCategoryDBHelper.close();
                             Toast.makeText(GuideActivity.this, "loadCategory done.", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(GuideActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }else{
+                            //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
+                            //startActivity(intent);
+                        } else {
                             Toast.makeText(GuideActivity.this, "loadCategory failed.", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -206,8 +220,8 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(GuideActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
+                        //startActivity(intent);
                     }
                 })
                 .create();
@@ -216,14 +230,13 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
     }
 
 
-
-    private void unZip(){
+    private void unZip() {
         Log.d("Tab01ProductAdapter", ZipTool.APP_DIR);
         isAPP_DIRExists();
         //ZipTool.upZipFileDir();
-        for (String one:bookzips) {
+        for (String one : bookzips) {
             File result = checkBooksExists(one);
-            if(result != null){
+            if (result != null) {
                 ZipTool.upZipFileDir(result, ZipTool.APP_DIR_UNZIP); //好像是单线程的
             }
         }
@@ -256,42 +269,64 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
 
     }*/
 
-    private boolean loadCategory2(String path){
-        if(FileUtil.isFileExist(path)){
+    private boolean loadCategory2(String path) {
+
+        if (FileUtil.isFileExist(path)) {
             File rootDirFile = new File(path);
-            if(rootDirFile.isDirectory()){
+            if (rootDirFile.isDirectory()) {
                 /*String listFilesNames = "";
                 for (File file:
                      rootDirFile.listFiles()) {
                     listFilesNames += file.getName() + "$$";
                 }
                 categoryBean.categoryListFilesName = listFilesNames;*/
-                if(myCategoryDBHelper != null){
+                File[] tempFiles = FileUtil.orderByName(rootDirFile.listFiles());
+                if (myCategoryDBHelper != null) {
                     //String categoryHashName = FileUtil.getMD5Checksum(rootDirFile.getAbsolutePath());
-
 
                     String tableName = FileUtil.replaceBy_(rootDirFile.getName());
                     myCategoryDBHelper.deleteTable(tableName);
                     myCategoryDBHelper.createCategoryTable(tableName);
-                    File[] tempFiles = FileUtil.orderByName(rootDirFile.listFiles());
+                    addToAllCategoryTable(tableName);
+
                     CategoryBean categoryBean = new CategoryBean();
                     int categoryInsertOrder = 1;
-                    if(tempFiles[0].exists() && tempFiles[0].getName().contains("jieshao")){
+                    if (tempFiles[0].exists() && tempFiles[0].getName().contains("jieshao")) {
                         String temp = "";
+                        //String result = "";
+
                         byte[] bytes = new byte[1024];
                         int count = 0;
-                        try{
-                            FileInputStream fileInputStream = new FileInputStream(tempFiles[0]);
+                        FileInputStream fileInputStream = null;
+                        //InputStreamReader inputStreamReader = null;
+                        //BufferedReader bufferReader = null;
+                        try {
+                            fileInputStream = new FileInputStream(tempFiles[0]);
                             //new File(tempFiles[0].getAbsolutePath(), "utf-8");
                             //ReaderInputStream reader = new ReaderInputStream(new FileReader(tempFiles[0]), "gbk");
-                            if((count = fileInputStream.read(bytes)) != -1){
-                                temp += new String(bytes, 0 , count, "gbk");
-                                Log.d("GuideActivity", "has jieshao temp:" + temp);
+                            while ((count = fileInputStream.read(bytes)) != -1) {
+                                temp += new String(bytes, 0, count, "gbk");
                             }
-                        }catch (FileNotFoundException e){
+                            Log.d("GuideActivity", "has jieshao temp:" + temp);
+                            /*fileInputStream = new FileInputStream(tempFiles[0]);
+                            inputStreamReader = new InputStreamReader(fileInputStream);
+                            bufferReader = new BufferedReader(inputStreamReader);
+                            while ((temp = bufferReader.readLine()) != null){
+                                result += temp;
+                            }
+                            Log.d("GuideActivity", "has jieshao result:" + result);*/
+
+                        } catch (FileNotFoundException e) {
                             e.printStackTrace();
-                        }catch (IOException e){
+                        } catch (IOException e) {
                             e.printStackTrace();
+                        }
+                        if(fileInputStream != null){
+                            try{
+                                fileInputStream.close();
+                            }catch (IOException e){
+                                e.printStackTrace();
+                            }
                         }
 
                         categoryBean.categoryHashName = "noHash";
@@ -302,67 +337,181 @@ public class GuideActivity extends AppCompatActivity implements OnProgressBarLis
                         myCategoryDBHelper.insertData(tableName, categoryBean);
                     }
 
+                    //File[] files2 = FileUtil.orderByName(rootDirFile.listFiles());
+                    if (tempFiles[0].getName().endsWith(".txt")) {
+                        keepOneBook(tempFiles, tableName);
+                    } else {
+                        for (File file :
+                                tempFiles) {
+                        /*if(file.getName().endsWith(".txt") ){
 
-                    for (File file:
-                            FileUtil.orderByName(rootDirFile.listFiles())) {
-                        Log.d("findbug", "file.getName():" + file.getName());
-                        categoryBean = new CategoryBean();
-                        categoryBean.categoryHashName = "noHash";
-                        categoryBean.categoryInsertOrder = categoryInsertOrder;
-                        categoryInsertOrder++;
-                        categoryBean.categoryPath = FileUtil.replaceBy_(file.getAbsolutePath());
-                        categoryBean.categoryName = FileUtil.replaceBy_(file.getName());
-                        myCategoryDBHelper.insertData(tableName, categoryBean);
+
+                            Log.d("findbug", "file.getName():" + file.getName());
+                            categoryBean = new CategoryBean();
+                            categoryBean.categoryHashName = "noHash";
+                            categoryBean.categoryInsertOrder = categoryInsertOrder;
+                            categoryInsertOrder++;
+                            categoryBean.categoryPath = FileUtil.replaceBy_(file.getAbsolutePath());
+                            categoryBean.categoryName = FileUtil.replaceBy_(file.getName());
+                            myCategoryDBHelper.insertData(tableName, categoryBean);
+                        }*/
+                            Log.d("findbug", "file.getName():" + file.getName());
+                            categoryBean = new CategoryBean();
+                            categoryBean.categoryHashName = "noHash";
+                            categoryBean.categoryInsertOrder = categoryInsertOrder;
+                            categoryInsertOrder++;
+                            categoryBean.categoryPath = FileUtil.replaceBy_(file.getAbsolutePath());
+                            categoryBean.categoryName = FileUtil.replaceBy_(file.getName());
+                            myCategoryDBHelper.insertData(tableName, categoryBean);
+                        }
                     }
                 }
-                    for (File file : FileUtil.orderByName(rootDirFile.listFiles())) {
-                        loadCategory2(file.getAbsolutePath());
-                    }
 
+                for (File file : FileUtil.orderByName(rootDirFile.listFiles())) {
+                    loadCategory2(file.getAbsolutePath());
+                }
             }
+
+            /*else if(rootDirFile.getName().endsWith(".txt")){
+                //此为具体的某本书籍
+                CategoryBean categoryBean = new CategoryBean();
+                rootDirFile
+            }*/
             return true;
-        }else{
+        } else {
             Toast.makeText(this, "loadCategory fail path not exists.", Toast.LENGTH_SHORT).show();
             return false;
         }
 
     }
 
-    private void isAPP_DIRExists(){
+    private void keepOneBook(File[] tempFiles, String tableName) {
+        int categoryInsertOrder = 1;
+        List<File> list_temp = new ArrayList<File>();
+        for (File file2 :
+                tempFiles) {
+            if (file2.getName().contains("jieshao") || file2.getName().contains("zuozhe")) {
+
+            } else {
+                list_temp.add(file2);
+            }
+        }
+
+
+        for (File file :
+                list_temp) {
+
+            StringBuilder result = new StringBuilder("");
+            String temp = "";
+            byte[] bytes = new byte[1024];
+            int count = 0;
+            FileInputStream fileInputStream = null;
+            InputStreamReader inputStreamReader = null;
+            BufferedReader bufferReader = null;
+            try {
+                fileInputStream = new FileInputStream(file);
+                inputStreamReader = new InputStreamReader(fileInputStream);
+                bufferReader = new BufferedReader(inputStreamReader);
+                //new File(tempFiles[0].getAbsolutePath(), "utf-8");
+                //ReaderInputStream reader = new ReaderInputStream(new FileReader(tempFiles[0]), "gbk");
+                /*if ((count = fileInputStream.read(bytes)) != -1) {
+                    temp += new String(bytes, 0, count, "gbk");
+                }*/
+                while ((temp = bufferReader.readLine()) != null){
+                    result.append(temp);
+                    //result += temp;
+                }
+                Log.d("GuideActivity", "has categoryContent result:" + result.toString());
+                //Log.d("GuideActivity", "has categoryContent temp:" + new String(temp.getBytes(), "gb2312"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(fileInputStream != null){
+                try{
+                    fileInputStream.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+            if(inputStreamReader != null){
+                try{
+                    inputStreamReader.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+            if(bufferReader != null){
+                try{
+                    bufferReader.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+            /*categoryBean.categoryHashName = "noHash";
+            categoryBean.categoryInsertOrder = 0;
+            categoryBean.categoryPath = FileUtil.replaceBy_(rootDirFile.getAbsolutePath());
+            categoryBean.categoryName = FileUtil.replaceBy_(rootDirFile.getName());
+            categoryBean.categoryJieshao = temp;
+            myCategoryDBHelper.insertData(tableName, categoryBean);*/
+
+
+            Log.d("findbug", "into keepOneBook file.getName():" + file.getName());
+            CategoryBean categoryBean = new CategoryBean();
+            categoryBean.categoryHashName = "noHash";
+            categoryBean.categoryInsertOrder = categoryInsertOrder;
+            categoryInsertOrder++;
+            categoryBean.categoryPath = FileUtil.replaceBy_(file.getAbsolutePath());
+            categoryBean.categoryName = FileUtil.replaceBy_(file.getName());
+            categoryBean.categoryContent = "test测试什么鬼";
+            //categoryBean.categoryContent = temp;
+            myCategoryDBHelper.insertData(tableName, categoryBean);
+        }
+    }
+
+    private void addToAllCategoryTable(String tableName){
+        Log.d("findbug0716", "into addToAllCategoryTable()");
+        myCategoryDBHelper.addToAllCategoryTable(tableName);
+    }
+
+    private void isAPP_DIRExists() {
         File appFile = new File(ZipTool.APP_DIR);
-        if(!appFile.exists()){
+        if (!appFile.exists()) {
             appFile.mkdirs();
             Log.d("Tab01ProductAdapter", "!appFile.exists()");
         }
 
         File appUnzipFile = new File(ZipTool.APP_DIR_UNZIP);
-        if(!appUnzipFile.exists()){
+        if (!appUnzipFile.exists()) {
             appUnzipFile.mkdirs();
             Log.d("Tab01ProductAdapter", "!appUnzipFile.exists()");
         }
     }
 
-    private File checkBooksExists(String book){
+    private File checkBooksExists(String book) {
         String bookFilePath = ZipTool.APP_DIR + "/" + book;
         Log.d("Tab01ProductAdapter", "into checkBooksExists() bookFilePath:" + bookFilePath);
         File bookFile = new File(bookFilePath);
-        if(!bookFile.exists()){
+        if (!bookFile.exists()) {
             Log.d("Tab01ProductAdapter", "!bookFile.exists() is true");
             return null;
-        }else{
+        } else {
             Log.d("Tab01ProductAdapter", "!bookFile.exists() is false");
             return bookFile;
         }
     }
 
-    private void checkMyPermission(){
+    private void checkMyPermission() {
         try {
             //检测是否有写的权限
             int permission = ActivityCompat.checkSelfPermission(this,
                     "android.permission.WRITE_EXTERNAL_STORAGE");
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 // 没有写的权限，去申请写的权限，会弹出对话框
-                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();

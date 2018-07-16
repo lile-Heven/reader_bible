@@ -189,7 +189,7 @@ public class SerachActivity extends BaseActivity {
                 if(female.getId()==checkedId){
                     msg = "当前选中的性别为:"+female.getText().toString();
                 }*/
-                Toast.makeText(getApplication(),"SerachActivity.SEARCH_KIND:" + SerachActivity.SEARCH_KIND,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplication(),"SerachActivity.SEARCH_KIND:" + SerachActivity.SEARCH_KIND,Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -272,18 +272,20 @@ public class SerachActivity extends BaseActivity {
     public void updateSelected(){
         category_selected_strs = FileUtil.replaceBy_(category_selected_str1 ).substring(FileUtil.replaceBy_(category_selected_str1 ).indexOf("_") + 1)
                 + "-" + FileUtil.replaceBy_(category_selected_str2).substring(FileUtil.replaceBy_(category_selected_str2 ).indexOf("_") + 1)
-                + "-" + FileUtil.replaceBy_(category_selected_str3).substring(FileUtil.replaceBy_(category_selected_str3 ).indexOf("_") + 1);
+                + "-" + "《" + FileUtil.replaceBy_(category_selected_str3).substring(FileUtil.replaceBy_(category_selected_str3 ).indexOf("_") + 1) + "》";
         tv_sactivity_selected.setText("已选中：" + category_selected_strs);
     }
 
     public void showReadyToSearch(){
         ll_waitselected.setVisibility(View.INVISIBLE);
         ll_readytosearch.setVisibility(View.VISIBLE);
+        tv_sactivity_searching_title.setText("请输入搜索内容");
     }
 
     public void showWaitToSelected(){
         ll_readytosearch.setVisibility(View.INVISIBLE);
         ll_waitselected.setVisibility(View.VISIBLE);
+        tv_sactivity_searching_title.setText("请输入搜索内容");
     }
 
     @Override

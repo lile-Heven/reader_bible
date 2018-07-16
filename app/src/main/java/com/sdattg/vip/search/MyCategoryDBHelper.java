@@ -29,7 +29,7 @@ import java.util.Set;
 public class MyCategoryDBHelper extends SQLiteOpenHelper {
 
     private static final int Version_1 = 1;
-    private static final String DB_NAME = "lxgj.db";
+    private static final String DB_NAME = "lxgj2.db";
 
     private final String SearchId_category = "SearchId_category";
     private final String FileHashName_category = "FileHashName_category";
@@ -38,6 +38,11 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
     private final String ListFilesName_category = "ListFilesName_category";
     private final String InsertOrder = "InsertOrder";
     private final String Jieshao = "Jieshao";
+    private final String Content = "Content";
+
+
+    private final String AllCategoryTableName = "name";
+    public static final String MyAllCategoryTAble = "lile_category";
 
 
 
@@ -63,8 +68,15 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
         String sql_category = "create table if not exists '" + TABLE_NAME + "' (" + SearchId_category
                 + " integer primary key autoincrement," + FileHashName_category + " varchar(255),"
                 + InsertOrder + " integer, "
-                + Jieshao + " blob, "
+                + Jieshao + " text, "
+                + Content + " text, "
                 + FileName_category + " varchar(255), " + FilePath_category + " varchar(255), " + ListFilesName_category + " varchar(255))" ;
+        getWritableDatabase().execSQL(sql_category);
+    }
+
+    public void createAllCategoryTable(String TABLE_NAME) {
+        String sql_category = "create table if not exists '" + TABLE_NAME + "' (" + SearchId_category
+                + " integer primary key autoincrement," + AllCategoryTableName + " varchar(255))" ;
         getWritableDatabase().execSQL(sql_category);
     }
 
@@ -125,11 +137,13 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
                 , categoryBean.categoryInsertOrder
                 , categoryBean.categoryPath
                 , categoryBean.categoryName
-                , categoryBean.categoryJieshao);
+                , categoryBean.categoryJieshao
+                , categoryBean.categoryContent
+        );
     }
 
-    public void insertData(String TABLE_NAME, String categoryHashName, int categoryInsertOrder,  String categoryPath, String categoryName, String categoryJieshao) {
-        Log.d("MyCategoryDBHelper", "into insertData()");
+    public void insertData(String TABLE_NAME, String categoryHashName, int categoryInsertOrder,  String categoryPath, String categoryName, String categoryJieshao, String categoryContent) {
+        //Log.d("MyCategoryDBHelper", "into insertData()");
         if (!TextUtils.isEmpty(categoryPath)) {
             if (IsHasData(TABLE_NAME, FileHashName_category, categoryHashName)) {//已经存在了，先删除
                 //deleteRecordsByFileHashName(fileHashName);
@@ -146,8 +160,8 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
 
 
 
-            sql = " insert into '" + TABLE_NAME + "' (" + FileHashName_category + "," + InsertOrder + "," + FileName_category + "," + FilePath_category + "," + Jieshao + ") values ('" + categoryHashName
-                    + "','" + categoryInsertOrder + "','" + categoryName + "','" + categoryPath + "','" + categoryJieshao + "')";
+            sql = " insert into '" + TABLE_NAME + "' (" + FileHashName_category + "," + InsertOrder + "," + FileName_category + "," + FilePath_category + "," + Jieshao + "," + Content + ") values ('" + categoryHashName
+                    + "','" + categoryInsertOrder + "','" + categoryName + "','" + categoryPath + "','" + categoryJieshao + "','" + categoryContent +"')";
 
             getWritableDatabase().execSQL(sql);
             //Log.d("MyCategoryDBHelper", sql);
@@ -329,6 +343,38 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<String> getAllTables(){
+        List<String> allTables = new ArrayList<String>();
+        Cursor cursor = getWritableDatabase().rawQuery("select * from '" + MyCategoryDBHelper.MyAllCategoryTAble + "' ", null);
+
+        if (cursor != null) {
+            //Log.d("MyCategoryDBHelper", "into cursor != null");
+            Log.d("MyCategoryDBHelper", "into getAllTables " + cursor.getCount() + "");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                allTables.add(cursor.getString(cursor.getColumnIndex(AllCategoryTableName)));
+                cursor.moveToNext();
+                while (!cursor.isAfterLast()) {
+                    allTables.add(cursor.getString(cursor.getColumnIndex(AllCategoryTableName)));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }else{
+            Log.d("MyCategoryDBHelper", "into getAllTables cursor is null");
+        }
+        //Log.d("MyCategoryDB", "into getAllTables() count:" + allTables.size());
+        return allTables;
+    }
+
+    public void addToAllCategoryTable(String tableName){
+        String sql = "";
+        sql = " insert into '" + MyCategoryDBHelper.MyAllCategoryTAble + "' (" + AllCategoryTableName + ") values ('" + tableName + "')";
+        getWritableDatabase().execSQL(sql);
+        getAllTables();
+        //Log.d("MyCategoryDB", "into addToAllCategoryTable sql:" + sql);
+    }
+
     /**
      * @param str
      * @return 如果userId 为空，不分用户返回的是所有下载的数据,否则返回指定用户的下载记录,不会返回空
@@ -338,13 +384,14 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
         Log.d("MyCategoryDBHelper", "into getCategory()");
         List<CategoryBean> searchBeans = new ArrayList<>();
         Cursor cursor;
-        if (TextUtils.isEmpty(str)) {
+        if (TextUtils.isEmpty(TABLE_NAME)) {
             //Log.d("MyCategoryDBHelper", "into TextUtils.isEmpty(userId) is true");
             //cursor = getWritableDatabase().rawQuery("select * from '" + TABLE_NAME + "'" + "order by InsertOrder asc", null);
             //Log.d("MyCategoryDBHelper", "into  TextUtils.isEmpty(userId) is tru cursor != null cursor.getCount():" + cursor.getCount() + "");
-            cursor = null;
+            cursor = getWritableDatabase().rawQuery("select * from all where " + column + " like '%" + str +"%'" + "order by InsertOrder asc", null);
+            Log.d("MyCategoryDBHelper", "into getContains TextUtils.isEmpty(str) is true");
         } else {
-            Log.d("MyCategoryDBHelper", "into getContains TextUtils.isEmpty(userId) is false");
+            Log.d("MyCategoryDBHelper", "into getContains TextUtils.isEmpty(str) is false");
             cursor = getWritableDatabase().rawQuery("select * from '" + TABLE_NAME + "'"  +" where " + column + " like '%" + str +"%'" + "order by InsertOrder asc", null);
             //cursor = getCursorContains(TABLE_NAME, FileHashName_category, str);
         }
@@ -386,7 +433,7 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
         bean.categoryName = cursor.getString(fileNameIndex);
 
         int jieshao = cursor.getColumnIndex(Jieshao);
-        if(cursor.getBlob(jieshao) != null){
+        if(cursor.getString(jieshao) != null){
             /*ByteArrayInputStream stream = new ByteArrayInputStream(
                     cursor.getBlob(jieshao));
             bean.categoryJieshao = convertStreamToString(stream);*/
@@ -394,6 +441,14 @@ public class MyCategoryDBHelper extends SQLiteOpenHelper {
             Log.d("MyCategoryDB", "into bean.categoryJieshao:" + bean.categoryJieshao);
         }else{
             bean.categoryJieshao = "";
+        }
+
+        int content = cursor.getColumnIndex(Content);
+        if(cursor.getString(content) != null){
+            bean.categoryContent = new String(cursor.getString(content));
+            Log.d("MyCategoryDB", "into bean.categoryJieshao:" + bean.categoryContent);
+        }else{
+            //bean.categoryContent = "";
         }
 
         return bean;
