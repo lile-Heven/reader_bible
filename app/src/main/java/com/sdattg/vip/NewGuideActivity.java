@@ -1,6 +1,7 @@
 package com.sdattg.vip;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -135,14 +136,13 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
             }, 1000, 100);
             unZip();
             initSQLite(ZipTool.APP_DIR_UNZIP);
-            /*if (loadCategory2(ZipTool.APP_DIR_UNZIP)) {
-
-                Toast.makeText(NewGuideActivity.this, "loadCategory done.", Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
-                //startActivity(intent);
+            if (initSQLite(ZipTool.APP_DIR_UNZIP)) {
+                Toast.makeText(NewGuideActivity.this, "loadCategory done.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(NewGuideActivity.this, MainActivity.class);
+                startActivity(intent);
             } else {
-                Toast.makeText(NewGuideActivity.this, "loadCategory failed.", Toast.LENGTH_SHORT).show();
-            }*/
+                Toast.makeText(NewGuideActivity.this, "loadCategory failed.", Toast.LENGTH_LONG).show();
+            }
 
         } else {
             updateDialog();
@@ -174,11 +174,15 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
             SharePreferencesUtil.setSQliteDatasInitOnceTrue(getApplicationContext());
         }
 
+        Log.d("findbug071717", "InitDatas.hasNotDone:" + InitDatas.hasNotDone);
         if(InitDatas.hasNotDone == 0){
             SharePreferencesUtil.setHasAllDoneTrue(getApplicationContext());
+            Log.d("findbug071717", "into 11");
         }else{
+            Log.d("findbug071717", "into 12");
             InitDatas.hasNotDone = 0;
         }
+        Log.d("findbug071717", "InitDatas.hasAllDone:" + InitDatas.hasAllDone);
         Log.d("findbug0717", "done initSQLite()");
         return done;
     }
@@ -205,8 +209,8 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
                         unZip();
                         if (initSQLite(ZipTool.APP_DIR_UNZIP)) {
                             Toast.makeText(NewGuideActivity.this, "loadCategory done.", Toast.LENGTH_LONG).show();
-                            //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
-                            //startActivity(intent);
+                            Intent intent = new Intent(NewGuideActivity.this, MainActivity.class);
+                            startActivity(intent);
                         } else {
                             Toast.makeText(NewGuideActivity.this, "loadCategory failed.", Toast.LENGTH_LONG).show();
                         }
@@ -215,8 +219,8 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //Intent intent = new Intent(GuideActivity.this, MainActivity.class);
-                        //startActivity(intent);
+                        Intent intent = new Intent(NewGuideActivity.this, MainActivity.class);
+                        startActivity(intent);
                     }
                 })
                 .create();

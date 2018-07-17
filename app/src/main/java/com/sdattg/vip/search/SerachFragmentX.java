@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.sdattg.vip.MainActivity;
 import com.sdattg.vip.R;
 import com.sdattg.vip.base.BaseFragment;
+import com.sdattg.vip.bean.NewCategoryBean;
 import com.sdattg.vip.util.FileUtil;
 
 import java.util.ArrayList;
@@ -51,10 +52,10 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
     protected void initView(View view) {
         switch (SerachActivity.category_selected) {
             case 0:
-                querybooks("01-圣经");
+                querybooks("01_圣经");
                 break;
             case 1:
-                querybooks("02-怀著");
+                querybooks("02_怀著");
                 break;
             case 2:
                 querybooks("其他");
@@ -161,7 +162,7 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
 
             SerachActivity.category_selected_str2 = ((String) view.getTag());
             SerachActivity.category_selected_str3 = "";
-            ((SerachActivity)getContext()).updateSelected();
+            ((SerachActivity) getContext()).updateSelected();
 
             if (((String) view.getTag()).equals("全部")) {
                 if (scrollView != null) {
@@ -342,9 +343,9 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             Log.d("findbug071517", "list_book.get(i)：" + list_book.get(i));
                             SerachActivity.category_selected_str3 = (list_book.get(i));
-                            ((SerachActivity)getContext()).updateSelected();
+                            ((SerachActivity) getContext()).updateSelected();
 
-                            ((SerachActivity)getContext()).showReadyToSearch();
+                            ((SerachActivity) getContext()).showReadyToSearch();
                         }
                     });
                     gv.setAdapter(adapter);
@@ -502,9 +503,9 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         Log.d("findbug071517", "list_book.get(i)：" + list_book.get(i));
                         SerachActivity.category_selected_str3 = (list_book.get(i));
-                        ((SerachActivity)getContext()).updateSelected();
+                        ((SerachActivity) getContext()).updateSelected();
 
-                        ((SerachActivity)getContext()).showReadyToSearch();
+                        ((SerachActivity) getContext()).showReadyToSearch();
                     }
                 });
                 gv.setAdapter(adapter);
@@ -556,8 +557,19 @@ public class SerachFragmentX extends BaseFragment implements View.OnClickListene
     public static List<String> list_xinyue_str;
 
     private void querybooks(String dirName) {
-        MyCategoryDBHelper myCategoryDBHelper = new MyCategoryDBHelper(getContext());
-        results = myCategoryDBHelper.getQueryBooks(FileUtil.replaceBy_(dirName), null);
+        NewCategoryDBHelper myCategoryDBHelper = new NewCategoryDBHelper(getContext());
+        results = new HashMap<String, List<String>>();
+        List<NewCategoryBean> list_category = myCategoryDBHelper.queryCategory(dirName);
+        for (NewCategoryBean categoryBean:
+             list_category) {
+            List<NewCategoryBean> booksCategory_list = myCategoryDBHelper.queryCategory(categoryBean.name);
+            List<String> books_list = new ArrayList<String>();
+            for (NewCategoryBean one:
+                    booksCategory_list) {
+                books_list.add(one.name);
+            }
+            results.put(categoryBean.name, books_list);
+        }
 
 
 

@@ -11,7 +11,9 @@ import android.widget.LinearLayout;
 import com.sdattg.vip.base.BaseFragment;
 import com.sdattg.vip.base.BaseTablayoutFtagment3HZ;
 import com.sdattg.vip.bean.CategoryBean;
+import com.sdattg.vip.bean.NewCategoryBean;
 import com.sdattg.vip.search.MyCategoryDBHelper;
+import com.sdattg.vip.search.NewCategoryDBHelper;
 import com.sdattg.vip.util.FileUtil;
 
 import java.lang.reflect.Field;
@@ -33,21 +35,21 @@ public class Main02FragmentHuaiZhu extends BaseTablayoutFtagment3HZ {
     public static int book_count_3 = 0;
 
     public static List<String> list_item;
-    public static List<CategoryBean> list_bibei;
+    public static List<NewCategoryBean> list_bibei;
     public static List<String> list_bibei_str;
-    public static  List<CategoryBean> list_jiankang;
+    public static  List<NewCategoryBean> list_jiankang;
     public static  List<String> list_jiankang_str;
-    public static  List<CategoryBean> list_jiaoyu;
+    public static  List<NewCategoryBean> list_jiaoyu;
     public static  List<String> list_jiaoyu_str;
-    public static  List<CategoryBean> list_mianyan;
+    public static  List<NewCategoryBean> list_mianyan;
     public static  List<String> list_mianyan_str;
-    public static  List<CategoryBean> list_gaojian;
+    public static  List<NewCategoryBean> list_gaojian;
     public static  List<String> list_gaojian_str;
-    public static  List<CategoryBean> list_zhengyan;
+    public static  List<NewCategoryBean> list_zhengyan;
     public static  List<String> list_zhengyan_str;
-    public static  List<CategoryBean> list_budao;
+    public static  List<NewCategoryBean> list_budao;
     public static  List<String> list_budao_str;
-    public static  List<CategoryBean> list_lingxiu;
+    public static  List<NewCategoryBean> list_lingxiu;
     public static  List<String> list_lingxiu_str;
 
     Main02FragmentListHZ main02FragmentListHZ_0 = new Main02FragmentListHZ();
@@ -145,170 +147,162 @@ public class Main02FragmentHuaiZhu extends BaseTablayoutFtagment3HZ {
         list_budao_str = new ArrayList<String>();
         list_lingxiu_str = new ArrayList<String>();
 
-        MyCategoryDBHelper myCategoryDBHelper = new MyCategoryDBHelper(getContext());
+        NewCategoryDBHelper myCategoryDBHelper = new NewCategoryDBHelper(getContext());
 
-        list_bibei = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("01-必备"), null);
-        for (CategoryBean categoryBean:
+        list_bibei = myCategoryDBHelper.queryCategory("01_必备");
+        for (NewCategoryBean categoryBean:
                 list_bibei) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.author = "作者:怀爱伦";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
-            List<CategoryBean> books_jiuyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_jiuyue.size() > 0){
-                bean.jieshao = books_jiuyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_bibei_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_bibei = list_bibei.size();
 
 
-        list_jiankang = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("02-健康"), null);
-        for (CategoryBean categoryBean:
+        list_jiankang = myCategoryDBHelper.queryCategory("02_健康");
+        for (NewCategoryBean categoryBean:
                 list_jiankang) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.title = "";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
             bean.author = "作者:怀爱伦";
-            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_xinyue.size() > 0){
-                bean.jieshao = books_xinyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_jiankang_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_jiankang = list_jiankang.size();
 
 
-        list_jiaoyu = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("03-教育"), null);
-        for (CategoryBean categoryBean:
+        list_jiaoyu = myCategoryDBHelper.queryCategory("03_教育");
+        for (NewCategoryBean categoryBean:
                 list_jiaoyu) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.title = "";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
             bean.author = "作者:怀爱伦";
-            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_xinyue.size() > 0){
-                bean.jieshao = books_xinyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_jiaoyu_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_jiaoyu = list_jiaoyu.size();
 
         book_count_3 = book_count_bibei + book_count_jiankang + book_count_jiaoyu;
 
-        list_mianyan = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("04-勉言"), null);
-        for (CategoryBean categoryBean:
+        list_mianyan = myCategoryDBHelper.queryCategory("04_勉言");
+        for (NewCategoryBean categoryBean:
                 list_mianyan) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.title = "";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
             bean.author = "作者:怀爱伦";
-            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_xinyue.size() > 0){
-                bean.jieshao = books_xinyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_mianyan_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_mianyan = list_mianyan.size();
 
 
-        list_gaojian = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("05-稿件"), null);
-        for (CategoryBean categoryBean:
+        list_gaojian = myCategoryDBHelper.queryCategory("05_稿件");
+        for (NewCategoryBean categoryBean:
                 list_gaojian) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.title = "";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
             bean.author = "作者:怀爱伦";
-            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_xinyue.size() > 0){
-                bean.jieshao = books_xinyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_gaojian_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_gaojian = list_gaojian.size();
 
 
-        list_zhengyan = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("06-证言"), null);
-        for (CategoryBean categoryBean:
+        list_zhengyan = myCategoryDBHelper.queryCategory("06_证言");
+        for (NewCategoryBean categoryBean:
                 list_zhengyan) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.title = "";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
             bean.author = "作者:怀爱伦";
-            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_xinyue.size() > 0){
-                bean.jieshao = books_xinyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_zhengyan_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_zhengyan = list_zhengyan.size();
 
-        list_budao = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("07-布道"), null);
-        for (CategoryBean categoryBean:
+        list_budao = myCategoryDBHelper.queryCategory("07_布道");
+        for (NewCategoryBean categoryBean:
                 list_budao) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.title = "";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
             bean.author = "作者:怀爱伦";
-            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_xinyue.size() > 0){
-                bean.jieshao = books_xinyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_budao_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_budao = list_budao.size();
 
-        list_lingxiu = myCategoryDBHelper.getCategory(FileUtil.replaceBy_("08-灵修"), null);
-        for (CategoryBean categoryBean:
+        list_lingxiu = myCategoryDBHelper.queryCategory("08_灵修");
+        for (NewCategoryBean categoryBean:
                 list_lingxiu) {
             BookBeanOnShuKu bean = new BookBeanOnShuKu();
             bean.title = "";
-            bean.title = categoryBean.categoryName.substring(categoryBean.categoryName.indexOf("_") + 1);
+            bean.title = categoryBean.name.substring(categoryBean.name.indexOf("_") + 1);
             bean.author = "作者:怀爱伦";
-            List<CategoryBean> books_xinyue = myCategoryDBHelper.getCategory(FileUtil.replaceBy_(categoryBean.categoryName), "jieshao");
-            if(books_xinyue.size() > 0){
-                bean.jieshao = books_xinyue.get(0).categoryJieshao;
-                Log.d("Tab01Product", "bean.jieshao:" + bean.jieshao);
+            String jieshao = myCategoryDBHelper.getJieShao(categoryBean.name);
+            if(jieshao != null){
+                bean.jieshao = jieshao;
+                //Log.d("findbug071706", "bean.jieshao:" + bean.jieshao);
             }else{
                 bean.jieshao = "暂没有介绍";
             }
             list_lingxiu_str.add(bean.toString());
             list_item.add(bean.toString());
-            Log.d("GuideActivity", "categoryInsertOrder:" + categoryBean.categoryInsertOrder + ", categoryPath:" + categoryBean.categoryPath + ", categoryNam:" + categoryBean.categoryName);
         }
         book_count_lingxiu = list_lingxiu.size();
     }

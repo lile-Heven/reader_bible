@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.sdattg.vip.search.MyCategoryDBHelper;
 import com.sdattg.vip.search.NewCategoryDBHelper;
+import com.sdattg.vip.search.UpdatingBooksThread;
+import com.sdattg.vip.search.UpdatingProgressThread;
 import com.sdattg.vip.util.FileUtil;
 import com.sdattg.vip.util.SharePreferencesUtil;
 
@@ -47,6 +49,8 @@ public class InitDatas {
         if (hasSQliteDatasInitOnce) {
             initFromBooks(DBhalper);
         } else {
+            DBhalper.deleteTable(table_books);
+            DBhalper.createBooksTable(table_books, column_id, column_path, column_name);
             initNewCategoryBean(DBhalper, rootPath, tableName);
         }
         DBhalper.close();
@@ -59,24 +63,23 @@ public class InitDatas {
 
         FileUtil fileUtil = new FileUtil();
         if (fileUtil.isPathAvailable(rootPath)) {
-            DBhalper.deleteTable(table_books);
-            DBhalper.createBooksTable(table_books, column_id, column_path, column_name);
+
 
             File[] files = new File(rootPath).listFiles();
             files = FileUtil.orderByName(files);
             if (files[0] != null && files[0].getName().endsWith(".txt")) {
-                addToBooksTable(DBhalper, rootPath, tableName);
+
                 //此时已经进入到书籍目录
                 initOneBook(DBhalper, rootPath, tableName);
             } else {
+                DBhalper.deleteTable(tableName);
+                DBhalper.createNewCategoryBeanTable(tableName,
+                        column_id,
+                        column_name,
+                        column_path,
+                        column_parentPath);
                 for (File file :
                         files) {
-                    DBhalper.deleteTable(tableName);
-                    DBhalper.createNewCategoryBeanTable(tableName,
-                            column_id,
-                            column_name,
-                            column_path,
-                            column_parentPath);
 
                     NewCategoryBean bean = new NewCategoryBean();
                     bean.name = FileUtil.replaceBy_(file.getName());
@@ -91,28 +94,40 @@ public class InitDatas {
         }
     }
 
-    private void initFromBooks(NewCategoryDBHelper DBhalper) {
+    public void initFromBooks(NewCategoryDBHelper DBhalper) {
+        Log.d("findbug071717", "into 670");
+
         if(hasAllDone){
+            Log.d("findbug071717", "into 671");
             return;
         }
         if (onlyUpdateJieShao) {
+            Log.d("findbug071717", "into 672");
             return;
         }
+        Log.d("findbug071717", "into 673");
         List<String> books_list = new ArrayList<String>();
-        Cursor cursor = DBhalper.getWritableDatabase().rawQuery("select '" + InitDatas.column_name + "' from '" + table_books + "'", null);
-        Log.d("findbug0717", "into hasJieShao");
+        Cursor cursor = DBhalper.getWritableDatabase().rawQuery("select * from '" + table_books + "'", null);
+        //Log.d("findbug0717", "into hasJieShao");
         if (cursor != null) {
-            Log.d("findbug0717", "into hasJieShao cursor.getCount():" + cursor.getCount());
+            Log.d("findbug071717", "into initFromBooks cursor.getCount():" + cursor.getCount());
             if (cursor.getCount() > 0) {
+                UpdatingProgressThread.booksCount = cursor.getCount();
                 cursor.moveToFirst();
                 String name = cursor.getString(cursor.getColumnIndex(InitDatas.column_name));
                 String path = cursor.getString(cursor.getColumnIndex(InitDatas.column_path));
+                Log.d("findbug071717", "into 674");
                 initOneBook(DBhalper, path, name);
+                UpdatingProgressThread.progress = Integer.valueOf(cursor.getString(cursor.getColumnIndex(InitDatas.column_id)));
+                Log.d("findbug071719", "progress:" + UpdatingProgressThread.progress);
                 cursor.moveToNext();
                 while (!cursor.isAfterLast()) {
+                    Log.d("findbug071717", "into 674");
                     String name2 = cursor.getString(cursor.getColumnIndex(InitDatas.column_name));
                     String path2 = cursor.getString(cursor.getColumnIndex(InitDatas.column_path));
                     initOneBook(DBhalper, path2, name2);
+                    UpdatingProgressThread.progress = Integer.valueOf(cursor.getString(cursor.getColumnIndex(InitDatas.column_id)));
+                    Log.d("findbug071719", "progress:" + UpdatingProgressThread.progress);
                     cursor.moveToNext();
                 }
             }
@@ -122,6 +137,10 @@ public class InitDatas {
     }
 
     public void initOneBook(NewCategoryDBHelper DBhalper, String bookPath, String bookName) {
+        Log.d("findbug071717", "into initOneBook()");;
+        addToBooksTable(DBhalper, bookPath, bookName);
+
+        Log.d("findbug071718", "into initOneBook() hasNotDone:" + hasNotDone);
         FileUtil fileUtil = new FileUtil();
         if (fileUtil.isPathAvailable(bookPath)) {
             if (isBookDone(DBhalper, bookPath, bookName)) {
@@ -335,8 +354,8 @@ public class InitDatas {
         }
         String sql = " insert into '" + table_books + "' (" + InitDatas.column_path + "," + InitDatas.column_name + ") values ('" + bookPath + "', '" + bookName + "')";
         DBhalper.getWritableDatabase().execSQL(sql);
-
-
+        Log.d("findbug0717", "addToBooksTable sql:" + sql);
+        DBhalper.getBooks();
     }
 
 
@@ -383,9 +402,9 @@ public class InitDatas {
                 column_jieshao);
 
         Cursor cursor = DBhalper.getWritableDatabase().rawQuery("select * from '" + bookName + "' where " + InitDatas.column_chapter + " = " + "'" + column_jieshao + "'", null);
-        Log.d("findbug0717", "into hasJieShao");
+        //Log.d("findbug0717", "into hasJieShao");
         if (cursor != null) {
-            Log.d("findbug0717", "into hasJieShao cursor.getCount():" + cursor.getCount() + ", bookName:" + bookName);
+            //Log.d("findbug0717", "into hasJieShao cursor.getCount():" + cursor.getCount() + ", bookName:" + bookName);
             if (cursor.getCount() > 0) {
                 //String done = cursor.getString(cursor.getColumnIndex(InitDatas.column_paragraphIndex));
                 return true;

@@ -35,6 +35,18 @@ public class FileUtil {
         return name.replace("-", "_");
     }
 
+    public static String substringFrom_(String name){
+        return name.substring(name.indexOf("_") + 1);
+    }
+
+    public static String addShumingHao(String name){
+        return "《"+ name + "》";
+    }
+
+    public static String getNameFromPath(String path){
+        return path.substring(path.lastIndexOf("/") + 1);
+    }
+
     public static byte[] createChecksum(String filename) {
         try{
             InputStream fis =  new FileInputStream(filename);

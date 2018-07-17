@@ -12,6 +12,7 @@ import com.sdattg.vip.bean.InitDatas;
 import com.sdattg.vip.bean.NewBookBean;
 import com.sdattg.vip.bean.NewCategoryBean;
 import com.sdattg.vip.bean.NewChapterBean;
+import com.sdattg.vip.bean.NewShowChapterBean;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,6 +85,7 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
                 + parentPath + " varchar(255)"
                 + ")";
         getWritableDatabase().execSQL(sql);
+        Log.d("findbug071705", "tableName:" + TABLE_NAME);
     }
 
     public void createBookBeanTable(String TABLE_NAME, String id, String name, String path, String parentPath, String jieshao){
@@ -226,9 +228,11 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
             Log.d("NewCategoryDB", "into getBooks()" + cursor.getCount() + "");
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
+                Log.d("NewCategoryDB", "into getBooks() cursor.getString(cursor.getColumnIndex(InitDatas.column_name)):" + cursor.getString(cursor.getColumnIndex(InitDatas.column_name)) );
                 books.add(cursor.getString(cursor.getColumnIndex(InitDatas.column_name)));
                 cursor.moveToNext();
                 while (!cursor.isAfterLast()) {
+                    Log.d("NewCategoryDB", "into getBooks() cursor.getString(cursor.getColumnIndex(InitDatas.column_name)):" + cursor.getString(cursor.getColumnIndex(InitDatas.column_name)) );
                     books.add(cursor.getString(cursor.getColumnIndex(InitDatas.column_name)));
                     cursor.moveToNext();
                 }
@@ -237,152 +241,64 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         }else{
             Log.d("NewCategoryDB", "into getCategory cursor == null ");
         }
-        Log.d("NewCategoryDB", "books.size():" + books.size());
+        Log.d("NewCategoryDB", "into getBooks() books.size():" + books.size() );
         return books;
     }
 
-    /**
-     * @param categoryHashName 文件hash值
-     * @return 如果没有记录，返回null
-     */
-    public CategoryBean getRecordByHashName(String TABLE_NAME, String categoryHashName) {
-        if (!TextUtils.isEmpty(categoryHashName) && IsHasData(TABLE_NAME, FileHashName_category, categoryHashName)) {
-            Cursor cursor = getCursorByKeyValue(TABLE_NAME, FileHashName_category, categoryHashName);
-            if (cursor != null) {
-                if (cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    CategoryBean bean = getCategoryBeanFromCursor(cursor);
-                    cursor.close();
-                    return bean;
-                }
-                cursor.close();
+
+    public String getJieShao(String name){
+        Cursor cursor = getWritableDatabase()
+                .rawQuery("select * from '" + name + "' where " + InitDatas.column_chapter + " = " + "'" + InitDatas.column_jieshao + "'", null);
+        if (cursor != null) {
+            Log.d("MyCategoryDBHelper", cursor.getCount() + "");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                return cursor.getString(cursor.getColumnIndex(InitDatas.column_jieshao));
             }
+            cursor.close();
         }
         return null;
     }
 
-    /**
-     * @param jieshao
-     * @return 如果userId 为空，不分用户返回的是所有下载的数据,否则返回指定用户的下载记录,不会返回空
-     */
-    public List<CategoryBean> getCategory(String TABLE_NAME, String jieshao) {
-        Log.d("MyCategoryDBHelper", "into getCategory()");
-        List<CategoryBean> searchBeans = new ArrayList<>();
+    public List<NewCategoryBean> queryCategory(String category){
+        List<NewCategoryBean> searchBeans = new ArrayList<>();
         Cursor cursor;
-        if (TextUtils.isEmpty(jieshao)) {
-            Log.d("MyCategoryDBHelper", "into TextUtils.isEmpty(userId) is true");
-            cursor = getWritableDatabase().rawQuery("select * from '" + TABLE_NAME + "'" + "order by InsertOrder asc", null);
-            Log.d("MyCategoryDBHelper", "into  TextUtils.isEmpty(userId) is tru cursor != null cursor.getCount():" + cursor.getCount() + "");
+        if (TextUtils.isEmpty(category)) {
+            cursor = null;
+            Log.w("findbug", "into queryCategory() TextUtils.isEmpty(category)");
         } else {
-            Log.d("MyCategoryDBHelper", "into TextUtils.isEmpty(userId) is false");
-            cursor = getCursorByKeyValue(TABLE_NAME, InsertOrder, "0");
+            cursor = getWritableDatabase().rawQuery("select * from '" + category + "'", null);
         }
         if (cursor != null) {
-            Log.d("MyCategoryDBHelper", "into cursor != null");
             Log.d("MyCategoryDBHelper", cursor.getCount() + "");
             if (cursor.getCount() > 0) {
-                Log.d("MyCategoryDBHelper", cursor.getCount() + "");
                 cursor.moveToFirst();
-                searchBeans.add(getCategoryBeanFromCursor(cursor));
+                searchBeans.add(getNewCategoryBeanFromCursor(cursor));
                 cursor.moveToNext();
                 while (!cursor.isAfterLast()) {
-                    searchBeans.add(getCategoryBeanFromCursor(cursor));
+                    searchBeans.add(getNewCategoryBeanFromCursor(cursor));
                     cursor.moveToNext();
                 }
             }
             cursor.close();
         }else{
-            Log.d("MyCategoryDBHelper", "into getCategory cursor == null TABLE_NAME:" + TABLE_NAME);
+
         }
         return searchBeans;
-
     }
 
-    /**
-     * 获取某一个类目的搜索书籍情况，比如：圣经 这个类目
-     * @param TABLE_NAME
-     * @param args
-     * @return
-     */
-    public HashMap<String, List<String>> getQueryBooks(String TABLE_NAME, String args){
-        HashMap<String, List<String>> results = new HashMap<String, List<String>>();
-        Cursor cursor;
-        if (TextUtils.isEmpty(args)) {
-            cursor = getWritableDatabase().rawQuery("select * from '" + TABLE_NAME + "'" + "order by InsertOrder asc", null);
-        } else {
-            //cursor = getCursorByKeyValue(TABLE_NAME, InsertOrder, "0");
-            cursor = null;
-        }
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                Log.d("MyCategoryDBHelper", cursor.getCount() + "");
-                cursor.moveToFirst();
-                results.put(cursor.getString(cursor.getColumnIndex(FileName_category)), new ArrayList<String>());
-                cursor.moveToNext();
-                while (!cursor.isAfterLast()) {
-                    results.put(cursor.getString(cursor.getColumnIndex(FileName_category)), new ArrayList<String>());
-                    cursor.moveToNext();
-                }
-            }
-            cursor.close();
+    private NewCategoryBean getNewCategoryBeanFromCursor(Cursor cursor) {
+        NewCategoryBean bean = new NewCategoryBean();
+        int name = cursor.getColumnIndex(InitDatas.column_name);
+        bean.name = cursor.getString(name);
 
-            /*Cursor cursor2;
-            for (int i = 0; i < results.size(); i++){
-                cursor2 = getWritableDatabase().rawQuery("select * from '" + results.keySet() + "'" + "order by InsertOrder asc", null);
-            }*/
+        int path = cursor.getColumnIndex(InitDatas.column_path);
+        bean.path = cursor.getString(path);
 
-            Set<String> keySet = results.keySet();
-            Iterator iterator = keySet.iterator();
-            String[] keys = new String[keySet.size()];
-            int ii = 0;
-            while (iterator.hasNext()){
-                String temp = (String)iterator.next();
-                Log.d("findbug0715", "temp:" + temp);
-                keys[ii] = temp;
-                ii++;
-            }
+        int parentPath = cursor.getColumnIndex(InitDatas.column_parentPath);
+        bean.parentPath = cursor.getString(parentPath);
 
-            List fileList = Arrays.asList(keys);
-            Collections.sort(fileList, new Comparator<String>() {
-                @Override
-                public int compare(String o1, String o2) {
-                    return o1.compareTo(o2);
-                }
-            });
-
-            Cursor cursor2;
-            for (String name:
-                 keys) {
-                Log.d("findbug0715", "name:" + name);
-                cursor2 = getWritableDatabase().rawQuery("select * from '" + name + "'" + "order by InsertOrder asc", null);
-                if (cursor2 != null) {
-                    if (cursor2.getCount() > 0) {
-                        List<String> list = results.get(name);
-                        Log.d("MyCategoryDBHelper", cursor2.getCount() + "");
-                        cursor2.moveToFirst();
-                        list.add(cursor2.getString(cursor2.getColumnIndex(FileName_category)));
-
-                        cursor2.moveToNext();
-                        while (!cursor2.isAfterLast()) {
-                            list.add(cursor2.getString(cursor2.getColumnIndex(FileName_category)));
-                            cursor2.moveToNext();
-                        }
-
-                        results.put(name, list);
-                    }
-                    cursor.close();
-                }else {
-                    Log.d("MyCategoryDBHelper", "into getCategory cursor == null TABLE_NAME:" + name);
-                }
-
-            }
-
-            showResults(results);
-
-        }else{
-            Log.d("MyCategoryDBHelper", "into getCategory cursor == null TABLE_NAME:" + TABLE_NAME);
-        }
-        return results;
+        return bean;
     }
 
     private void showResults(HashMap<String, List<String>> results){
@@ -439,129 +355,180 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         return allTables;
     }
 
-    public void addToAllCategoryTable(String tableName){
-        String sql = "";
-        sql = " insert into '" + NewCategoryDBHelper.MyAllCategoryTAble + "' (" + AllCategoryTableName + ") values ('" + tableName + "')";
-        getWritableDatabase().execSQL(sql);
-        getAllTables();
-        //Log.d("MyCategoryDB", "into addToAllCategoryTable sql:" + sql);
-    }
 
-    /**
-     * @param str
-     * @return 如果userId 为空，不分用户返回的是所有下载的数据,否则返回指定用户的下载记录,不会返回空
-     * String current_sql_sel = "SELECT  * FROM "+tab_name +" where "+tab_field02+" like '%"+str[0]+"%'";
-     */
-    public List<CategoryBean> getContains(String TABLE_NAME, String column, String str) {
-        Log.d("MyCategoryDBHelper", "into getCategory()");
-        List<CategoryBean> searchBeans = new ArrayList<>();
-        Cursor cursor;
-        if (TextUtils.isEmpty(TABLE_NAME)) {
-            //Log.d("MyCategoryDBHelper", "into TextUtils.isEmpty(userId) is true");
-            //cursor = getWritableDatabase().rawQuery("select * from '" + TABLE_NAME + "'" + "order by InsertOrder asc", null);
-            //Log.d("MyCategoryDBHelper", "into  TextUtils.isEmpty(userId) is tru cursor != null cursor.getCount():" + cursor.getCount() + "");
-            cursor = getWritableDatabase().rawQuery("select * from all where " + column + " like '%" + str +"%'" + "order by InsertOrder asc", null);
-            Log.d("MyCategoryDBHelper", "into getContains TextUtils.isEmpty(str) is true");
-        } else {
-            Log.d("MyCategoryDBHelper", "into getContains TextUtils.isEmpty(str) is false");
-            cursor = getWritableDatabase().rawQuery("select * from '" + TABLE_NAME + "'"  +" where " + column + " like '%" + str +"%'" + "order by InsertOrder asc", null);
-            //cursor = getCursorContains(TABLE_NAME, FileHashName_category, str);
-        }
+    public List<String> queryBooks(String like_content){
+        Log.d("findbug0717", "into DBHelper queryBooks()");
+        List<String> books = new ArrayList<>();
+        Cursor cursor = getWritableDatabase().rawQuery("select * from '" + InitDatas.table_books + "' where " + InitDatas.column_name + " like '%" + like_content + "%'", null);
         if (cursor != null) {
-            //Log.d("MyCategoryDBHelper", "into cursor != null");
-            Log.d("MyCategoryDBHelper", "into getContains " + cursor.getCount() + "");
+            Log.d("findbug0717", "into getBooks()" + cursor.getCount() + "");
             if (cursor.getCount() > 0) {
-                Log.d("MyCategoryDBHelper", cursor.getCount() + "");
                 cursor.moveToFirst();
-                searchBeans.add(getCategoryBeanFromCursor(cursor));
+                books.add(cursor.getString(cursor.getColumnIndex(InitDatas.column_name)));
                 cursor.moveToNext();
                 while (!cursor.isAfterLast()) {
-                    searchBeans.add(getCategoryBeanFromCursor(cursor));
+                    books.add(cursor.getString(cursor.getColumnIndex(InitDatas.column_name)));
                     cursor.moveToNext();
                 }
             }
             cursor.close();
+        }else{
+            Log.d("findbug0717", "into getCategory cursor == null ");
         }
-        return searchBeans;
-
+        Log.d("findbug0717", "books.size():" + books.size());
+        return books;
     }
 
 
-    private CategoryBean getCategoryBeanFromCursor(Cursor cursor) {
-        CategoryBean bean = new CategoryBean();
-        int userIdIndex = cursor.getColumnIndex(FileHashName_category);
-        bean.categoryHashName = cursor.getString(userIdIndex);
+    public List<NewBookBean> queryIndexs(String like_content){
+        List<NewBookBean> results = new ArrayList<NewBookBean>();
 
-        int order = cursor.getColumnIndex(InsertOrder);
-        bean.categoryInsertOrder = cursor.getInt(order);
-
-        int searchIdIndex = cursor.getColumnIndex(SearchId_category);
-        bean.id = cursor.getInt(searchIdIndex);
-
-        int CachePathIndex = cursor.getColumnIndex(FilePath_category);
-        bean.categoryPath = cursor.getString(CachePathIndex);
-
-        int fileNameIndex = cursor.getColumnIndex(FileName_category);
-        bean.categoryName = cursor.getString(fileNameIndex);
-
-        int jieshao = cursor.getColumnIndex(Jieshao);
-        if(cursor.getString(jieshao) != null){
-            /*ByteArrayInputStream stream = new ByteArrayInputStream(
-                    cursor.getBlob(jieshao));
-            bean.categoryJieshao = convertStreamToString(stream);*/
-            bean.categoryJieshao = new String(cursor.getString(jieshao));
-            Log.d("MyCategoryDB", "into bean.categoryJieshao:" + bean.categoryJieshao);
-        }else{
-            bean.categoryJieshao = "";
+        List<String> all_books = getBooks();
+        for (String one_book:
+             all_books) {
+            List<NewBookBean> bookBeans = queryOneBookIndexs(one_book, like_content);
+            for (NewBookBean one:
+                 bookBeans) {
+                results.add(one);
+            }
         }
 
-        int content = cursor.getColumnIndex(Content);
-        if(cursor.getString(content) != null){
-            bean.categoryContent = new String(cursor.getString(content));
-            Log.d("MyCategoryDB", "into bean.categoryJieshao:" + bean.categoryContent);
-        }else{
-            //bean.categoryContent = "";
-        }
+        return results;
+    }
 
+    public List<NewBookBean> queryOneBookIndexs(String one_book, String like_content){
+        List<NewBookBean> books = new ArrayList<>();
+        Cursor cursor = getWritableDatabase().rawQuery("select * from '" + one_book + "' where " + InitDatas.column_chapter + " like '%" + like_content +"%'", null);
+        if (cursor != null) {
+            Log.d("NewCategoryDB", "into getBooks()" + cursor.getCount() + "");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                books.add(getNewBookBeanFromCursor(cursor));
+                cursor.moveToNext();
+                while (!cursor.isAfterLast()) {
+                    books.add(getNewBookBeanFromCursor(cursor));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }else{
+            Log.d("NewCategoryDB", "into getCategory cursor == null ");
+        }
+        Log.d("NewCategoryDB", "books.size():" + books.size());
+        return books;
+    }
+
+    private NewBookBean getNewBookBeanFromCursor(Cursor cursor){
+        NewBookBean bean = new NewBookBean();
+        bean.chapter = cursor.getString(cursor.getColumnIndex(InitDatas.column_chapter));
+        bean.parentPath = cursor.getString(cursor.getColumnIndex(InitDatas.column_parentPath));
+        bean.path = cursor.getString(cursor.getColumnIndex(InitDatas.column_path));
         return bean;
     }
 
-    public String convertStreamToString(InputStream is) {
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-
-        try {
-
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
+    /*public List<NewChapterBean> queryTitles(String like_content){
+        List<NewChapterBean> all_chapters = new ArrayList<>();
+        List<String> all_books = getBooks();
+        for (String one_book:
+                all_books) {
+            List<NewChapterBean> one_book_chapters = queryOneBookChapters(one_book, like_content);
+            for (NewChapterBean chapterBean:
+                    one_book_chapters) {
+                all_chapters.add(chapterBean);
             }
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        } finally {
-
-            try {
-
-                is.close();
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-
-            }
-
         }
+        return all_chapters;
+    }*/
 
-        return sb.toString();
-
+    public List<NewShowChapterBean> queryContents(String like_content){
+        List<NewShowChapterBean> all_chapters = new ArrayList<>();
+        List<String> all_books = getBooks();
+        for (String one_book:
+                all_books) {
+            List<NewShowChapterBean> one_book_chapters = queryOneBookChapters(one_book, like_content);
+            for (NewShowChapterBean chapterBean:
+                    one_book_chapters) {
+                all_chapters.add(chapterBean);
+            }
+        }
+        return all_chapters;
     }
 
+    public List<NewShowChapterBean> queryOneBookChapters(String one_book, String like_content){
+        List<NewShowChapterBean> one_book_chapters = new ArrayList<>();
+        Cursor cursor = getWritableDatabase().rawQuery("select * from '" + one_book + "' ", null);
+        List<NewBookBean> bookBeans = getChapters(cursor);
+        for (NewBookBean oneBookBean:
+        bookBeans) {
+            List<NewShowChapterBean> chapters = queryChapter(oneBookBean.chapter, like_content);
+            for (NewShowChapterBean chapterBean:
+                 chapters) {
+                one_book_chapters.add(chapterBean);
+            }
+        }
+        Log.d("NewCategoryDB", "books.size():" + one_book_chapters.size());
+        return one_book_chapters;
+    }
 
+    private List<NewBookBean> getChapters(Cursor cursor){
+        List<NewBookBean> bookBeans = new ArrayList<>();
+        if (cursor != null) {
+            Log.d("NewCategoryDB", "into getBooks()" + cursor.getCount() + "");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                bookBeans.add(getNewBookBeanFromCursor(cursor));
+                cursor.moveToNext();
+                while (!cursor.isAfterLast()) {
+                    bookBeans.add(getNewBookBeanFromCursor(cursor));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }else{
+            Log.d("NewCategoryDB", "into getCategory cursor == null ");
+        }
+        return bookBeans;
+    }
 
+    public List<NewShowChapterBean> queryChapter(String chapter, String like_content){
+        List<NewShowChapterBean> chapters = new ArrayList<>();
+        if(chapter.equals("jieshao") || chapter.equals("520520")){
+            return chapters;
+        }
+        Cursor cursor = null;
+        if(like_content.startsWith(SearchingThread.searchTitleFlag)){
+            //want to search titles-chapter
+            like_content = (like_content.split(SearchingThread.searchTitleFlag))[1];
+            Log.d("findbug071723", "like_content:" + like_content);
+            cursor = getWritableDatabase().rawQuery("select * from '" + chapter + "' where " + InitDatas.column_paragraphContent + " like '%b%" + like_content +"%'", null);
+        }else {
+            cursor = getWritableDatabase().rawQuery("select * from '" + chapter + "' where " + InitDatas.column_paragraphContent + " like '%" + like_content +"%'", null);
+        }
+
+        if (cursor != null) {
+            Log.d("NewCategoryDB", "into getBooks()" + cursor.getCount() + "");
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                chapters.add(getNewChapterBeanFromCursor(chapter, cursor));
+                cursor.moveToNext();
+                while (!cursor.isAfterLast()) {
+                    chapters.add(getNewChapterBeanFromCursor(chapter, cursor));
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+        }else{
+            Log.d("NewCategoryDB", "into getCategory cursor == null ");
+        }
+        Log.d("NewCategoryDB", "chapters.size():" + chapters.size());
+        return chapters;
+    }
+
+    private NewShowChapterBean getNewChapterBeanFromCursor(String chapter, Cursor cursor){
+        NewShowChapterBean bean = new NewShowChapterBean();
+        bean.chapterName = chapter;
+        bean.paragraphIndex = cursor.getString(cursor.getColumnIndex(InitDatas.column_paragraphIndex));
+        bean.paragraphContent = cursor.getString(cursor.getColumnIndex(InitDatas.column_paragraphContent));
+        return bean;
+    }
 }

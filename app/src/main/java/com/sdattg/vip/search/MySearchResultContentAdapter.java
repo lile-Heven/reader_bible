@@ -9,6 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.sdattg.vip.R;
+import com.sdattg.vip.bean.NewChapterBean;
+import com.sdattg.vip.bean.NewShowChapterBean;
+import com.sdattg.vip.util.FileUtil;
 
 import java.util.List;
 
@@ -20,25 +23,23 @@ public class MySearchResultContentAdapter extends BaseAdapter {
     //private Bitmap mIcon3;
     //private Bitmap mIcon4;
     //private List<String> items;
-    private List<String> paths1;
-    private List<String> paths2;
+    List<NewShowChapterBean> all_chapters;
     private Context context;
 
-    public MySearchResultContentAdapter(Context context, List<String> paths1, List<String> paths2) {
+    public MySearchResultContentAdapter(Context context, List<NewShowChapterBean> all_chapters) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
-        this.paths1 = paths1;
-        this.paths2 = paths2;
+        this.all_chapters = all_chapters;
         //myicon_folder = BitmapFactory.decodeResource(context.getResources(), R.mipmap.myicon_folder);
         //mIcon2 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_back02);
         //mIcon3 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.myicon_folder);
         //mIcon4 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.myicon_file);
     }
     public int getCount() {
-        return paths1.size();
+        return all_chapters.size();
     }
     public Object getItem(int position) {
-        return paths1.get(position);
+        return all_chapters.get(position);
     }
     public long getItemId(int position) {
         return position;
@@ -54,8 +55,8 @@ public class MySearchResultContentAdapter extends BaseAdapter {
         } else {
             holder = (MySearchResultContentAdapter.ViewHolder) convertView.getTag();
         }
-        holder.tv_item_sresult_content_1.setText(paths1.get(position).toString());
-        holder.tv_item_sresult_content_2.setText(paths2.get(position).toString());
+        holder.tv_item_sresult_content_1.setText(FileUtil.substringFrom_(all_chapters.get(position).chapterName));
+        holder.tv_item_sresult_content_2.setText(all_chapters.get(position).paragraphContent);
         return convertView;
     }
     private class ViewHolder {
