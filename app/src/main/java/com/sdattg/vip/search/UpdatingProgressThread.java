@@ -33,15 +33,16 @@ public class UpdatingProgressThread extends Thread {
     private void updateUI(int progress){
         Log.d("findbug071717", "into updateUI() progress:" + progress);
 
-        if(progress == 100){
+        if(progress >= 100){
+            whileFlag = false;
             if(InitDatas.hasNotDone == 0){
-                Log.d("findbug071717", "into 66666666666666666666");
+                Log.d("findbug071717", "into updateUI() 66666666666666666666");
                 SharePreferencesUtil.setHasAllDoneTrue(context);
             }else{
-                Log.d("findbug071717", "into 668");
+                Log.d("findbug071717", "into updateUI() 668");
                 InitDatas.hasNotDone = 0;
             }
-            Log.d("findbug071717", "into 66666");
+            Log.d("findbug071717", "into updateUI() 66666");
             SerachActivity.updateUIHandler.sendEmptyMessage(99);
         }
     }

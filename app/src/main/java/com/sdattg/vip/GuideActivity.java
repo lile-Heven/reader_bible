@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.bifan.txtreaderlib.ui.HwTxtPlayActivity;
 import com.sdattg.vip.base.BaseTablayoutActivity;
 import com.sdattg.vip.bean.CategoryBean;
 import com.sdattg.vip.bean.InitDatas;

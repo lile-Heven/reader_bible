@@ -32,7 +32,9 @@ public class FileUtil {
     }
 
     public static String replaceBy_(String name){
-        return name.replace("-", "_");
+        name = name.replace("-", "_");
+
+        return name.replace("'", "_");
     }
 
     public static String substringFrom_(String name){

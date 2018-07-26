@@ -117,7 +117,12 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
                 + column_paragraphIndex + " varchar(255), "
                 + column_paragraphContent + " text"
                 + ")";
-        getWritableDatabase().execSQL(sql);
+        try{
+            getWritableDatabase().execSQL(sql);
+        }catch (Exception e){
+            //SQLiteException: near "s": syntax error (Sqlite code 1): , while compiling: create table if not exists '一天的路程(Day's Journey).txt' (id integer primary key autoincrement,paragraphIndex varchar(255), paragraphparagraphContent text), (OS error - 2:No such file or directory)
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -140,8 +145,14 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
     }
 
     private Cursor getCursorByKeyValue(String TABLE_NAME, String column, String path) {
-        Cursor cursor = getWritableDatabase()
-                .rawQuery("select * from '" + TABLE_NAME + "' where " + column + " = " + "'" + path + "'", null);
+        Cursor cursor = null;
+        try{
+            cursor = getWritableDatabase()
+                    .rawQuery("select * from '" + TABLE_NAME + "' where " + column + " = " + "'" + path + "'", null);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         return cursor;
     }
 
@@ -188,7 +199,12 @@ public class NewCategoryDBHelper extends SQLiteOpenHelper {
         }
         String sql = " insert into '" + TABLE_NAME + "' (" + InitDatas.column_chapter + "," + InitDatas.column_path + "," + InitDatas.column_parentPath + "," +  InitDatas.column_jieshao + ") values ('" + chapter
                 + "','" + path + "','" + parentPath + "','" + jieshao + "')";
-        getWritableDatabase().execSQL(sql);
+        try{
+            getWritableDatabase().execSQL(sql);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 

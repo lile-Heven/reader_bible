@@ -28,7 +28,6 @@ public class MainActivity extends BaseTablayoutActivity {
     private TextView tv_serach;
     private final String TAG = MainActivity.class.getSimpleName();
 
-
     private MyFragmentShuKu mFragmentShuku;
     private MyFragmentLingXiu mFragmentLingXiu;
     private MyFragmentBaiKe mFragmentBaike;
@@ -61,8 +60,6 @@ public class MainActivity extends BaseTablayoutActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override

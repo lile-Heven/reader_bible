@@ -94,6 +94,7 @@ public class InitDatas {
         }
     }
 
+    public static int bookCount = 0;
     public void initFromBooks(NewCategoryDBHelper DBhalper) {
         Log.d("findbug071717", "into 670");
 
@@ -118,7 +119,8 @@ public class InitDatas {
                 String path = cursor.getString(cursor.getColumnIndex(InitDatas.column_path));
                 Log.d("findbug071717", "into 674");
                 initOneBook(DBhalper, path, name);
-                UpdatingProgressThread.progress = Integer.valueOf(cursor.getString(cursor.getColumnIndex(InitDatas.column_id)));
+                bookCount ++;
+                UpdatingProgressThread.progress = bookCount;
                 Log.d("findbug071719", "progress:" + UpdatingProgressThread.progress);
                 cursor.moveToNext();
                 while (!cursor.isAfterLast()) {
@@ -126,7 +128,8 @@ public class InitDatas {
                     String name2 = cursor.getString(cursor.getColumnIndex(InitDatas.column_name));
                     String path2 = cursor.getString(cursor.getColumnIndex(InitDatas.column_path));
                     initOneBook(DBhalper, path2, name2);
-                    UpdatingProgressThread.progress = Integer.valueOf(cursor.getString(cursor.getColumnIndex(InitDatas.column_id)));
+                    bookCount ++;
+                    UpdatingProgressThread.progress = bookCount;
                     Log.d("findbug071719", "progress:" + UpdatingProgressThread.progress);
                     cursor.moveToNext();
                 }

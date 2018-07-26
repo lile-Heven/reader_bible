@@ -174,7 +174,7 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
             SharePreferencesUtil.setSQliteDatasInitOnceTrue(getApplicationContext());
         }
 
-        Log.d("findbug071717", "InitDatas.hasNotDone:" + InitDatas.hasNotDone);
+        /*Log.d("findbug071717", "InitDatas.hasNotDone:" + InitDatas.hasNotDone);
         if(InitDatas.hasNotDone == 0){
             SharePreferencesUtil.setHasAllDoneTrue(getApplicationContext());
             Log.d("findbug071717", "into 11");
@@ -183,7 +183,7 @@ public class NewGuideActivity extends AppCompatActivity implements OnProgressBar
             InitDatas.hasNotDone = 0;
         }
         Log.d("findbug071717", "InitDatas.hasAllDone:" + InitDatas.hasAllDone);
-        Log.d("findbug0717", "done initSQLite()");
+        Log.d("findbug0717", "done initSQLite()");*/
         return done;
     }
 
